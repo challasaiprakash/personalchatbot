@@ -133,7 +133,7 @@ def get_secret(key: str, default=None):
 def get_sheet():
     """Authenticate and return (worksheet, error_string_or_None)."""
     if not GSPREAD_AVAILABLE:
-        return None, "gspread / google-auth not installed. Run: pip install gspread google-auth"
+        return None, "gspread / google-auth not installed."
 
     scopes = [
         "https://www.googleapis.com/auth/spreadsheets",
@@ -148,20 +148,22 @@ def get_sheet():
 
         if not has_gcp:
             return None, (
-                "No [gcp_service_account] found in Streamlit secrets. "
-                "Add it under App Settings → Secrets on Streamlit Cloud."
+                "No [gcp_service_account] found in Streamlit secrets."
             )
 
-        creds = Credentials.from_service_account_info(
-            dict(st.secrets["gcp_service_account"]), scopes=scopes
-        )
+        # Convert secrets section to plain dict and fix private_key newlines.
+        # On Streamlit Cloud, TOML may store the key with literal \n text
+        # instead of real newline characters — this ensures it always works.
+        sa_info = dict(st.secrets["gcp_service_account"])
+        if "private_key" in sa_info:
+            sa_info["private_key"] = sa_info["private_key"].replace("\\n", "\n")
+
+        creds = Credentials.from_service_account_info(sa_info, scopes=scopes)
         client = gspread.authorize(creds)
 
         sheet_id = (get_secret("GOOGLE_SHEET_ID") or "").strip()
         if not sheet_id:
-            return None, (
-                "GOOGLE_SHEET_ID is missing from Streamlit secrets."
-            )
+            return None, "GOOGLE_SHEET_ID is missing from Streamlit secrets."
 
         spreadsheet = client.open_by_key(sheet_id)
         worksheet = spreadsheet.sheet1
@@ -192,6 +194,17 @@ def log_out_of_scope(question: str):
         return None
     except Exception as exc:
         return str(exc)
+
+
+# ─── Sidebar: Sheet Connection Test ──────────────────────────────────────────
+with st.sidebar:
+    st.markdown("### 🛠️ Debug")
+    if st.button("Test Sheet Connection"):
+        ws, err = get_sheet()
+        if err:
+            st.error(f"❌ {err}")
+        else:
+            st.success("✅ Google Sheet connected successfully!")
 
 
 # ─── Resume Helpers ───────────────────────────────────────────────────────────
@@ -314,7 +327,6 @@ def initialize_rag():
 
     try:
         embedding_model = get_secret("HF_EMBEDDING_MODEL_ID", DEFAULT_EMBEDDING_MODEL_ID)
-        # get_secret() always converts booleans to str, so .lower() is always safe
         use_local = get_secret("USE_LOCAL_EMBEDDINGS", "false").lower() in {"1", "true", "yes"}
 
         if use_local:
@@ -447,14 +459,18 @@ if user_query := st.chat_input("Ask anything about Sai..."):
         st.session_state.messages.append({"role": "assistant", "content": answer})
 
         # ── Out-of-scope detection + logging ──
+        # Store error in session state so it persists across st.rerun()
         lowered = answer.lower()
         matched_phrase = next((p for p in OUT_OF_SCOPE_PHRASES if p in lowered), None)
         if matched_phrase:
             log_err = log_out_of_scope(user_query)
-            if log_err:
-                st.warning(f"📋 Sheet logging failed: {log_err}")
+            st.session_state["last_log_err"] = log_err  # persist across rerun
 
     st.rerun()
+
+# Show logging error AFTER rerun, outside the chat block
+if st.session_state.get("last_log_err"):
+    st.warning(f"📋 Sheet logging failed: {st.session_state.pop('last_log_err')}")
 
 # ─── Idle alien animation ─────────────────────────────────────────────────────
 else:
