@@ -2,7 +2,13 @@ import os
 import re
 import streamlit as st
 from datetime import datetime
-from dotenv import load_dotenv
+
+# ── Local dev: load .env if python-dotenv is installed (ignored on Streamlit Cloud) ──
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 # --- Google Sheets ---
 try:
@@ -33,8 +39,6 @@ try:
     from langchain_chroma import Chroma
 except ImportError:
     from langchain_community.vectorstores import Chroma
-
-load_dotenv()
 
 # ─── Page Config & Header ────────────────────────────────────────────────────
 st.set_page_config(page_title="AskSai", page_icon="🧠", layout="centered")
@@ -119,58 +123,72 @@ OUT_OF_SCOPE_REPLY = (
 SHEET_HEADERS = ["#", "Timestamp", "Question", "Status"]
 
 
-# ─── Secrets helper ───────────────────────────────────────────────────────────
-def get_secret(key: str, default=None):
+# ─── Unified Config Helper ────────────────────────────────────────────────────
+def get_config(key: str, default=None):
     """
-    Safe wrapper around st.secrets that supports a default value.
-    st.secrets[key, default] is NOT valid syntax — it treats the tuple as the key.
-    Use this helper everywhere a fallback is needed.
+    Priority:
+      1. st.secrets  (Streamlit Cloud — secrets.toml)
+      2. os.environ  (.env file via python-dotenv, or system env)
+      3. default
     """
     try:
-        return st.secrets[key]
+        val = st.secrets[key]
+        return str(val) if isinstance(val, bool) else val
     except (KeyError, FileNotFoundError):
-        return default
+        pass
+    return os.environ.get(key, default)
+
+
+def get_service_account_info():
+    """
+    Returns (service_account_dict, error_or_None).
+    Priority:
+      1. st.secrets["gcp_service_account"]  — Streamlit Cloud
+      2. service_account.json file          — local development
+    """
+    try:
+        info = dict(st.secrets["gcp_service_account"])
+        if info:
+            return info, None
+    except (KeyError, FileNotFoundError):
+        pass
+
+    if os.path.exists("service_account.json"):
+        import json
+        with open("service_account.json", "r") as f:
+            return json.load(f), None
+
+    return None, (
+        "No Google credentials found. "
+        "Locally: place service_account.json in the project root. "
+        "On Streamlit Cloud: add [gcp_service_account] to secrets.toml."
+    )
 
 
 # ─── Google Sheets Logger ─────────────────────────────────────────────────────
 def get_sheet():
     """Authenticate and return (worksheet, error_string_or_None)."""
     if not GSPREAD_AVAILABLE:
-        return None, "gspread / google-auth not installed. Run: pip install gspread google-auth"
+        return None, "gspread / google-auth not installed."
 
     scopes = [
         "https://www.googleapis.com/auth/spreadsheets",
         "https://www.googleapis.com/auth/drive",
     ]
 
+    service_info, err = get_service_account_info()
+    if err:
+        return None, err
+
     try:
-        try:
-            use_secrets = "gcp_service_account" in st.secrets
-        except Exception:
-            use_secrets = False
-
-        if use_secrets:
-            creds = Credentials.from_service_account_info(
-                st.secrets["gcp_service_account"], scopes=scopes
-            )
-        elif os.path.exists("service_account.json"):
-            creds = Credentials.from_service_account_file(
-                "service_account.json", scopes=scopes
-            )
-        else:
-            return None, (
-                "No Google credentials found. Place 'service_account.json' in the "
-                "project root, or add [gcp_service_account] to Streamlit secrets."
-            )
-
+        creds = Credentials.from_service_account_info(service_info, scopes=scopes)
         client = gspread.authorize(creds)
-        # FIX: use get_secret() instead of st.secrets["KEY", "default"]
-        sheet_id = (get_secret("GOOGLE_SHEET_ID") or "").strip()
 
+        sheet_id = (get_config("GOOGLE_SHEET_ID") or "").strip()
         if not sheet_id:
             return None, (
-                "GOOGLE_SHEET_ID missing from secrets — create a sheet manually, share it "
-                "with your service account email, then add its ID to secrets as GOOGLE_SHEET_ID=..."
+                "GOOGLE_SHEET_ID is missing. "
+                "Add it to .env locally or secrets.toml on Streamlit Cloud."
             )
 
         spreadsheet = client.open_by_key(sheet_id)
@@ -190,17 +208,24 @@ def get_sheet():
 
 
 def log_out_of_scope(question: str):
-    """Append an out-of-scope question to Google Sheets."""
+    """Append an out-of-scope question to Google Sheets. Returns error string or None."""
+    print(f"\n[SHEET] Out-of-scope detected → logging: {question!r}")
+
     worksheet, err = get_sheet()
     if err:
-        return
+        print(f"[SHEET] ❌ get_sheet() failed: {err}")
+        return err
+
     try:
         existing = worksheet.get_all_values()
         row_num = len(existing)
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         worksheet.append_row([row_num, timestamp, question, "Pending"])
-    except Exception:
-        pass
+        print(f"[SHEET] ✅ Row {row_num} appended successfully at {timestamp}")
+        return None
+    except Exception as exc:
+        print(f"[SHEET] ❌ append_row failed: {exc}")
+        return str(exc)
 
 
 # ─── Resume Helpers ───────────────────────────────────────────────────────────
@@ -280,11 +305,6 @@ def create_lexical_retriever(splits, k=5):
     return RunnableLambda(retrieve)
 
 
-def is_out_of_scope(answer: str) -> bool:
-    lowered = answer.lower()
-    return any(phrase in lowered for phrase in OUT_OF_SCOPE_PHRASES)
-
-
 # ─── RAG Initialisation ───────────────────────────────────────────────────────
 @st.cache_resource(show_spinner="⚙️ Setting up AskSai (one-time)...")
 def initialize_rag():
@@ -292,10 +312,12 @@ def initialize_rag():
     if resume_path is None:
         return None, "No .txt resume/profile file was found in the data folder."
 
-    # FIX: use get_secret() — st.secrets["KEY"] raises KeyError if missing
-    hf_token = get_secret("HUGGINGFACEHUB_API_TOKEN")
+    hf_token = get_config("HUGGINGFACEHUB_API_TOKEN")
     if not hf_token:
-        return None, "HUGGINGFACEHUB_API_TOKEN is missing. Add it to secrets.toml or Streamlit Cloud secrets."
+        return None, (
+            "HUGGINGFACEHUB_API_TOKEN is missing. "
+            "Add it to .env locally or to secrets.toml on Streamlit Cloud."
+        )
 
     with open(resume_path, "r", encoding="utf-8") as f:
         resume_text = f.read()
@@ -325,9 +347,8 @@ def initialize_rag():
     retrieval_docs = project_docs + general_splits
 
     try:
-        # FIX: all three st.secrets calls below replaced with get_secret()
-        embedding_model = get_secret("HF_EMBEDDING_MODEL_ID", DEFAULT_EMBEDDING_MODEL_ID)
-        use_local = get_secret("USE_LOCAL_EMBEDDINGS", "").lower() in {"1", "true", "yes"}
+        embedding_model = get_config("HF_EMBEDDING_MODEL_ID", DEFAULT_EMBEDDING_MODEL_ID)
+        use_local = get_config("USE_LOCAL_EMBEDDINGS", "false").lower() in {"1", "true", "yes"}
 
         if use_local:
             embeddings = HuggingFaceEmbeddings(model_name=embedding_model)
@@ -352,8 +373,7 @@ def initialize_rag():
             return format_docs(experience_docs)
         return format_docs(retriever.invoke(user_input))
 
-    # FIX: use get_secret() for model ID
-    model_id = get_secret("HF_MODEL_ID", DEFAULT_MODEL_ID)
+    model_id = get_config("HF_MODEL_ID", DEFAULT_MODEL_ID)
     endpoint = HuggingFaceEndpoint(
         repo_id=model_id,
         task="conversational",
@@ -463,7 +483,9 @@ if user_query := st.chat_input("Ask anything about Sai..."):
         lowered = answer.lower()
         matched_phrase = next((p for p in OUT_OF_SCOPE_PHRASES if p in lowered), None)
         if matched_phrase:
-            log_out_of_scope(user_query)
+            log_err = log_out_of_scope(user_query)
+            if log_err:
+                st.warning(f"📋 Sheet logging failed: {log_err}")
 
     st.rerun()
 
@@ -492,4 +514,3 @@ else:
         """,
         unsafe_allow_html=True,
     )
-
