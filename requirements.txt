@@ -1,0 +1,17 @@
+streamlit
+python-dotenv
+langchain
+langchain-core
+langchain-community
+langchain-text-splitters
+langchain-huggingface
+langchain-chroma
+chromadb
+sentence-transformers
+huggingface_hub
+gspread
+google-auth
+pysqlite3-binary
+protobuf==3.20.3
+torch
+torchvision

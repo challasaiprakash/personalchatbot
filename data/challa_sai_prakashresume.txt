@@ -1,0 +1,132 @@
+================================================================================
+CANDIDATE PROFILE SUMMARY
+================================================================================
+Full Name: Ing. Sai Prakash Challa
+Title: AI Engineer & Scientific Researcher
+Location: Ostrava, Czechia
+Email Contacts: challasaiprakashcsp@gmail.com
+Primary Phone: (+420) 778-596-622
+Secondary Phone: (+91) 8971-615857
+LinkedIn Profile URL: www.linkedin.com/in/challasp
+Core Specializations: Machine Learning, AI Modeling, Predictive Analytics, Computer Vision, Deep Learning, Time-Series Modeling, Intelligent System Design.
+Spoken Languages: English (C1 Professional Proficiency), Czech (Basic)
+
+================================================================================
+TECHNICAL SKILLS & KEY COMPETENCIES
+================================================================================
+- Programming Languages: Python, SQL
+- Data Visualization & Business Intelligence: Power BI, Microsoft Fabric
+- Machine Learning & Deep Learning Frameworks: LSTM, NARX, CNN (Convolutional Neural Networks), Instance Segmentation, Named Entity Recognition (NER), Ensemble Learning Models
+- Domain Expertise: Machine Vision, Defect Detection, Predictive Maintenance, Statistical Analysis, Data Preparation, Time-Series Forecasting, Intelligent Control Systems
+
+================================================================================
+EDUCATION DETAILS
+================================================================================
+Degree: Doctor of Philosophy (Ph.D.)
+Status: Doctoral Researcher / Ongoing (Started Sept 2024)
+Dissertation Title: Using the digital twin concept for the design of machine vision systems
+University: VSB - Technical University of Ostrava
+Location: Czechia
+
+Degree: Master's Degree in Control and Information Systems
+Timeline: September 2022 - June 2024
+University: VSB - Technical University of Ostrava
+Location: Czechia
+
+Degree: Bachelor of Engineering (B.E.) in Electronics and Communication Systems
+Timeline: August 2017 - July 2021
+University: Bellary Institute of Technology and Management (Affiliated with VTU Belagavi)
+Location: India
+
+================================================================================
+PROFESSIONAL EXPERIENCE
+================================================================================
+Role: Scientific Researcher
+Organization: VSB - Technical University of Ostrava (VSB-TUO)
+Location: Ostrava, Czech Republic
+Timeline: December 2024 - Present
+Description: Conducting research-focused development specializing in machine learning application, intelligent computer vision setups, and industrial predictive analytics.
+
+Role: Intern
+Organization: Q Spiders
+Location: Bangalore, India
+Timeline: January 2021 - February 2021
+
+================================================================================
+DETAILED PROJECT REPOSITORY
+================================================================================
+
+PROJECT 1: AI-Based Water Leakage & Fault Detection System for Swimming Pool Equipment
+- Category: Industry Collaboration & Applied AI (Doctoral Research)
+- Timeline: October 2025 - May 2026
+- Core Tech Stack: Python, Machine Learning, Signal Preprocessing, Audio/Acoustic Data Analytics, Predictive Maintenance
+- Key Deliverables & Achievements:
+  * Designed and implemented an AI-powered fault detection system to monitor swimming pool motor and filter configurations in real time.
+  * Developed a sound-based machine learning model analyzing motor and filter acoustic signals to accurately classify operational states.
+  * Successfully detects real-time water leakage conditions, motor malfunctions, and filter irregularities.
+  * Built an end-to-end data pipeline managing audio data collection, automated signal preprocessing, feature extraction, and model training.
+  * Result: Replaced manual equipment inspections with automated predictive maintenance pipelines.
+
+PROJECT 2: Automated Detection, Segmentation & Counting of Metallic Plates in Warehouse Environments
+- Category: Industry Collaboration & Applied AI (Doctoral Research)
+- Timeline: January 2026 - June 2026
+- Core Tech Stack: Python, Computer Vision, Instance Segmentation, Image Processing Pipelines, ML Evaluation Metrics (Precision, Recall, mAP)
+- Key Deliverables & Achievements:
+  * Engineered a custom computer vision AI algorithm to automatically detect, isolate, and count individual metallic plates stored in warehouse locations.
+  * Implemented an advanced instance segmentation model capable of accurately handling variable warehouse lighting conditions, stacked materials, and overlapping objects.
+  * Managed the full ML pipeline lifecycle: raw image data collection, preprocessing, model training, and performance validation using Mean Average Precision (mAP).
+  * Result: Automated warehouse inventory counting, eliminating manual tracking errors.
+
+PROJECT 3: Intelligent Contract Processing Pipeline with NER-Based Data Extraction
+- Category: Applied AI Engineering
+- Timeline: December 2024 - June 2025
+- Core Tech Stack: Python, Multilingual NLP, Named Entity Recognition (NER), Custom Text Extraction, DeepL API, JSON, Excel Automation (Macros), GUI Development
+- Key Deliverables & Achievements:
+  * Architected an end-to-end automated pipeline to process unstructured Czech manufacturing contracts.
+  * Integrated DeepL translation layers into a custom NLP token extraction framework to isolate specialized metal dimensions, structural styles, and production parameters.
+  * Designed and trained a high-precision Named Entity Recognition (NER) model targeting complex customer details and raw product technical specifications.
+  * Structured the final extracted entities into clean, standardized JSON files, directly integrating outputs into legacy macro-enabled Excel operations tools.
+  * Formed a desktop real-time monitoring Graphical User Interface (GUI) in Python to visualize contract document processing stages.
+  * Result: Eradicated manual contract entry mistakes and accelerated operational order fulfillment.
+
+PROJECT 4: Image Preprocessing for Neural Network Input (Master's Thesis)
+- Category: Academic Research & Computer Vision
+- Timeline: June 2023 - May 2024
+- Core Tech Stack: Python, Convolutional Neural Networks (CNN), Deep Learning, Image Filters, Power BI, Data Diagnostics
+- Key Deliverables & Achievements:
+  * Designed and optimized a comprehensive image preprocessing pipeline using numerical filters to discover surface defects across industrial datasets.
+  * Trained a deep learning Convolutional Neural Network (CNN) classifier utilizing the filtered and balanced image inputs.
+  * Conducted exhaustive model evaluations using strict metrics: accuracy, sensitivity, precision, execution runtime, and GPU memory utilization.
+  * Utilized data analysis tools like Power BI to visualize performance trends and pinpoint the ultimate sequence of preprocessing functions for large datasets.
+
+PROJECT 5: Solar Powered Weather Station
+- Category: Freelance Engineering Project
+- Timeline: February 2023 - June 2023
+- Core Tech Stack: Internet of Things (IoT), Wireless Transmission Protocols, Data Engineering, Energy-Efficient Algorithms
+- Key Deliverables & Achievements:
+  * Built a completely self-sustaining, solar-powered environmental weather station tracking telemetry.
+  * Integrated multi-sensor arrays capturing live temperature, ambient humidity, and barometric pressure data.
+  * Developed efficient power management and low-overhead wireless data transmission protocols to stream metrics securely to a central web server.
+  * Constructed remote web dashboard and mobile application interfaces for live environmental data streams.
+
+PROJECT 6: Smart IoT-Based Health Monitoring for Quarantined COVID-19 Patients (Bachelor's Thesis)
+- Category: Academic Research & Embedded Systems
+- Timeline: January 2021 - August 2021
+- Core Tech Stack: Internet of Things (IoT), Biosensors, Embedded Systems, Power Optimization Algorithms, Data Analytics
+- Key Deliverables & Achievements:
+  * Programmed a remote medical telemetry system tracking vitals of quarantined patients during the global pandemic.
+  * Integrated responsive hardware sensors tracking real-time Heart Rate, SpO2 Blood Oxygen saturation levels, and environment states.
+  * Optimized low-power management software to guarantee continuous, uninterrupted sensor array tracking.
+  * Delivered automated data insights helping healthcare specialists make critical decisions efficiently.
+
+================================================================================
+JOB SIMULATIONS & ADDITIONAL EXPERIENCE
+================================================================================
+Simulation: Power BI Job Simulation via Forage (PwC Switzerland)
+- Focus: Business Intelligence & Corporate Data Visualization
+- Achievements: Created executive-facing Power BI data visualization dashboards displaying complex operational KPIs. Analyzed corporate human resources metadata to locate root causes affecting executive-level gender diversity balance, communicating analytical outcomes via formal corporate reports.
+
+Simulation: Data Visualisation Job Simulation via Forage (Tata Consultancy Services)
+- Focus: Business Analytics & Executive Decision Making
+- Achievements: Authored visual data analysis layouts and metrics aimed at helping leadership executives drive operations decisions. Managed target preparation protocols for leadership sync meetings.
+================================================================================
