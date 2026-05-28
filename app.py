@@ -128,13 +128,13 @@ def get_config(key: str, default=None):
 def get_service_account_info():
     """
     Returns the GCP service account dict from st.secrets["service_account"].
-    Applies the critical fix: replaces literal \\n with real newlines in private_key.
+    FIX: Replaces literal \\n with real newlines in private_key.
     Streamlit Cloud stores TOML secrets as literal \\n which breaks Google auth.
     """
     try:
         info = dict(st.secrets["service_account"])
         if info:
-            # ✅ FIX: Streamlit Cloud TOML stores \n as literal characters.
+            # ✅ CRITICAL FIX: Streamlit Cloud TOML stores \n as literal characters.
             # Google auth needs real newline characters in the private key.
             if "private_key" in info:
                 info["private_key"] = info["private_key"].replace("\\n", "\n")
@@ -144,8 +144,7 @@ def get_service_account_info():
 
     return None, (
         "Google service account credentials not found. "
-        "Make sure [service_account] is present in your Streamlit secrets "
-        "(App → Settings → Advanced → Secrets)."
+        "Make sure [service_account] is present in your Streamlit secrets."
     )
 
 
@@ -153,7 +152,10 @@ def get_service_account_info():
 def get_sheet():
     """Authenticate and return (worksheet, error_string_or_None)."""
     if not GSPREAD_AVAILABLE:
-        return None, "gspread / google-auth not installed. Run: pip install gspread google-auth"
+        return None, (
+            "gspread / google-auth not installed. "
+            "Add 'gspread' and 'google-auth' to your requirements.txt and redeploy."
+        )
 
     scopes = [
         "https://www.googleapis.com/auth/spreadsheets",
@@ -166,14 +168,19 @@ def get_sheet():
 
     try:
         creds = Credentials.from_service_account_info(service_info, scopes=scopes)
-        client = gspread.authorize(creds)
+
+        # ✅ FIX: Use non-deprecated gspread client creation.
+        # gspread.authorize() is deprecated in newer versions used on Streamlit Cloud.
+        try:
+            client = gspread.Client(auth=creds)
+            client.session = requests.Session() if False else client.session  # noqa
+        except Exception:
+            # fallback for older gspread versions
+            client = gspread.authorize(creds)
 
         sheet_id = (get_config("GOOGLE_SHEET_ID") or "").strip()
         if not sheet_id:
-            return None, (
-                "GOOGLE_SHEET_ID is missing. "
-                "Add it to your Streamlit secrets."
-            )
+            return None, "GOOGLE_SHEET_ID is missing from Streamlit secrets."
 
         spreadsheet = client.open_by_key(sheet_id)
         worksheet = spreadsheet.sheet1
@@ -400,6 +407,12 @@ if rag_error:
     st.error(f"❌ Setup Error: {rag_error}")
     st.stop()
 
+# ✅ FIX: Show any sheet logging errors that survived a rerun.
+# st.rerun() destroys st.warning() before the user sees it,
+# so we store errors in session_state and display them after rerun.
+if st.session_state.get("_sheet_log_error"):
+    st.warning(f"📋 Sheet logging failed: {st.session_state['_sheet_log_error']}")
+    del st.session_state["_sheet_log_error"]
 
 # ─── Chat History ─────────────────────────────────────────────────────────────
 if "messages" not in st.session_state:
@@ -463,7 +476,9 @@ if user_query := st.chat_input("Ask anything about Sai..."):
         if matched_phrase:
             log_err = log_out_of_scope(user_query)
             if log_err:
-                st.warning(f"📋 Sheet logging failed: {log_err}")
+                # ✅ FIX: Store error in session_state so it survives st.rerun()
+                # and is visible to the developer after the page reloads.
+                st.session_state["_sheet_log_error"] = log_err
 
     st.rerun()
 
