@@ -2,6 +2,7 @@ import os
 import re
 import streamlit as st
 from datetime import datetime
+from dotenv import load_dotenv
 
 # --- Google Sheets ---
 try:
@@ -32,6 +33,8 @@ try:
     from langchain_chroma import Chroma
 except ImportError:
     from langchain_community.vectorstores import Chroma
+
+load_dotenv()
 
 # ─── Page Config & Header ────────────────────────────────────────────────────
 st.set_page_config(page_title="AskSai", page_icon="🧠", layout="centered")
@@ -116,71 +119,59 @@ OUT_OF_SCOPE_REPLY = (
 SHEET_HEADERS = ["#", "Timestamp", "Question", "Status"]
 
 
-# ─── Config Helper (st.secrets ONLY) ─────────────────────────────────────────
-def get_config(key: str, default=None):
+# ─── Secrets helper ───────────────────────────────────────────────────────────
+def get_secret(key: str, default=None):
+    """
+    Safe wrapper around st.secrets that supports a default value.
+    st.secrets[key, default] is NOT valid syntax — it treats the tuple as the key.
+    Use this helper everywhere a fallback is needed.
+    """
     try:
-        val = st.secrets[key]
-        return str(val) if isinstance(val, bool) else val
+        return st.secrets[key]
     except (KeyError, FileNotFoundError):
         return default
-
-
-def get_service_account_info():
-    """
-    Returns the GCP service account dict from st.secrets["service_account"].
-    FIX: Replaces literal \\n with real newlines in private_key.
-    Streamlit Cloud stores TOML secrets as literal \\n which breaks Google auth.
-    """
-    try:
-        info = dict(st.secrets["service_account"])
-        if info:
-            # ✅ CRITICAL FIX: Streamlit Cloud TOML stores \n as literal characters.
-            # Google auth needs real newline characters in the private key.
-            if "private_key" in info:
-                info["private_key"] = info["private_key"].replace("\\n", "\n")
-            return info, None
-    except (KeyError, FileNotFoundError):
-        pass
-
-    return None, (
-        "Google service account credentials not found. "
-        "Make sure [service_account] is present in your Streamlit secrets."
-    )
 
 
 # ─── Google Sheets Logger ─────────────────────────────────────────────────────
 def get_sheet():
     """Authenticate and return (worksheet, error_string_or_None)."""
     if not GSPREAD_AVAILABLE:
-        return None, (
-            "gspread / google-auth not installed. "
-            "Add 'gspread' and 'google-auth' to your requirements.txt and redeploy."
-        )
+        return None, "gspread / google-auth not installed. Run: pip install gspread google-auth"
 
     scopes = [
         "https://www.googleapis.com/auth/spreadsheets",
         "https://www.googleapis.com/auth/drive",
     ]
 
-    service_info, err = get_service_account_info()
-    if err:
-        return None, err
-
     try:
-        creds = Credentials.from_service_account_info(service_info, scopes=scopes)
-
-        # ✅ FIX: Use non-deprecated gspread client creation.
-        # gspread.authorize() is deprecated in newer versions used on Streamlit Cloud.
         try:
-            client = gspread.Client(auth=creds)
-            client.session = requests.Session() if False else client.session  # noqa
+            use_secrets = "gcp_service_account" in st.secrets
         except Exception:
-            # fallback for older gspread versions
-            client = gspread.authorize(creds)
+            use_secrets = False
 
-        sheet_id = (get_config("GOOGLE_SHEET_ID") or "").strip()
+        if use_secrets:
+            creds = Credentials.from_service_account_info(
+                st.secrets["gcp_service_account"], scopes=scopes
+            )
+        elif os.path.exists("service_account.json"):
+            creds = Credentials.from_service_account_file(
+                "service_account.json", scopes=scopes
+            )
+        else:
+            return None, (
+                "No Google credentials found. Place 'service_account.json' in the "
+                "project root, or add [gcp_service_account] to Streamlit secrets."
+            )
+
+        client = gspread.authorize(creds)
+        # FIX: use get_secret() instead of st.secrets["KEY", "default"]
+        sheet_id = (get_secret("GOOGLE_SHEET_ID") or "").strip()
+
         if not sheet_id:
-            return None, "GOOGLE_SHEET_ID is missing from Streamlit secrets."
+            return None, (
+                "GOOGLE_SHEET_ID missing from secrets — create a sheet manually, share it "
+                "with your service account email, then add its ID to secrets as GOOGLE_SHEET_ID=..."
+            )
 
         spreadsheet = client.open_by_key(sheet_id)
         worksheet = spreadsheet.sheet1
@@ -199,18 +190,17 @@ def get_sheet():
 
 
 def log_out_of_scope(question: str):
-    """Append an out-of-scope question to Google Sheets. Returns error string or None."""
+    """Append an out-of-scope question to Google Sheets."""
     worksheet, err = get_sheet()
     if err:
-        return err
+        return
     try:
         existing = worksheet.get_all_values()
         row_num = len(existing)
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         worksheet.append_row([row_num, timestamp, question, "Pending"])
-        return None
-    except Exception as exc:
-        return str(exc)
+    except Exception:
+        pass
 
 
 # ─── Resume Helpers ───────────────────────────────────────────────────────────
@@ -290,6 +280,11 @@ def create_lexical_retriever(splits, k=5):
     return RunnableLambda(retrieve)
 
 
+def is_out_of_scope(answer: str) -> bool:
+    lowered = answer.lower()
+    return any(phrase in lowered for phrase in OUT_OF_SCOPE_PHRASES)
+
+
 # ─── RAG Initialisation ───────────────────────────────────────────────────────
 @st.cache_resource(show_spinner="⚙️ Setting up AskSai (one-time)...")
 def initialize_rag():
@@ -297,12 +292,10 @@ def initialize_rag():
     if resume_path is None:
         return None, "No .txt resume/profile file was found in the data folder."
 
-    hf_token = get_config("HUGGINGFACEHUB_API_TOKEN")
+    # FIX: use get_secret() — st.secrets["KEY"] raises KeyError if missing
+    hf_token = get_secret("HUGGINGFACEHUB_API_TOKEN")
     if not hf_token:
-        return None, (
-            "HUGGINGFACEHUB_API_TOKEN is missing. "
-            "Add it to your Streamlit secrets."
-        )
+        return None, "HUGGINGFACEHUB_API_TOKEN is missing. Add it to secrets.toml or Streamlit Cloud secrets."
 
     with open(resume_path, "r", encoding="utf-8") as f:
         resume_text = f.read()
@@ -332,8 +325,9 @@ def initialize_rag():
     retrieval_docs = project_docs + general_splits
 
     try:
-        embedding_model = get_config("HF_EMBEDDING_MODEL_ID", DEFAULT_EMBEDDING_MODEL_ID)
-        use_local = get_config("USE_LOCAL_EMBEDDINGS", "false").lower() in {"1", "true", "yes"}
+        # FIX: all three st.secrets calls below replaced with get_secret()
+        embedding_model = get_secret("HF_EMBEDDING_MODEL_ID", DEFAULT_EMBEDDING_MODEL_ID)
+        use_local = get_secret("USE_LOCAL_EMBEDDINGS", "").lower() in {"1", "true", "yes"}
 
         if use_local:
             embeddings = HuggingFaceEmbeddings(model_name=embedding_model)
@@ -358,7 +352,8 @@ def initialize_rag():
             return format_docs(experience_docs)
         return format_docs(retriever.invoke(user_input))
 
-    model_id = get_config("HF_MODEL_ID", DEFAULT_MODEL_ID)
+    # FIX: use get_secret() for model ID
+    model_id = get_secret("HF_MODEL_ID", DEFAULT_MODEL_ID)
     endpoint = HuggingFaceEndpoint(
         repo_id=model_id,
         task="conversational",
@@ -407,12 +402,6 @@ if rag_error:
     st.error(f"❌ Setup Error: {rag_error}")
     st.stop()
 
-# ✅ FIX: Show any sheet logging errors that survived a rerun.
-# st.rerun() destroys st.warning() before the user sees it,
-# so we store errors in session_state and display them after rerun.
-if st.session_state.get("_sheet_log_error"):
-    st.warning(f"📋 Sheet logging failed: {st.session_state['_sheet_log_error']}")
-    del st.session_state["_sheet_log_error"]
 
 # ─── Chat History ─────────────────────────────────────────────────────────────
 if "messages" not in st.session_state:
@@ -474,11 +463,7 @@ if user_query := st.chat_input("Ask anything about Sai..."):
         lowered = answer.lower()
         matched_phrase = next((p for p in OUT_OF_SCOPE_PHRASES if p in lowered), None)
         if matched_phrase:
-            log_err = log_out_of_scope(user_query)
-            if log_err:
-                # ✅ FIX: Store error in session_state so it survives st.rerun()
-                # and is visible to the developer after the page reloads.
-                st.session_state["_sheet_log_error"] = log_err
+            log_out_of_scope(user_query)
 
     st.rerun()
 
@@ -507,3 +492,4 @@ else:
         """,
         unsafe_allow_html=True,
     )
+
