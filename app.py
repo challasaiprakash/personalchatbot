@@ -134,23 +134,14 @@ def get_service_account_info():
     Returns the GCP service account dict from st.secrets["service_account"].
     Matches the [service_account] section in your Streamlit secrets.
     """
-    #try:
-    #    info = dict(st.secrets["service_account"])
-    #    if info:
-     #       return info, None
-  #  except (KeyError, FileNotFoundError):
-    #    pass
-
     try:
-    info = dict(st.secrets["service_account"])
-    if info:
-        # Fix: Streamlit Cloud stores \n as literal text in TOML secrets.
-        # Google auth needs real newline characters in the private key.
-        if "private_key" in info:
-            info["private_key"] = info["private_key"].replace("\\n", "\n")
-        return info, None
-except (KeyError, FileNotFoundError):
-    pass
+       info = dict(st.secrets["service_account"])
+       if info:
+           return info, None
+    except (KeyError, FileNotFoundError):
+       pass
+
+  
 
     return None, (
         "Google service account credentials not found. "
