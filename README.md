@@ -14,7 +14,7 @@
 
 ## 🚀 Live Demo
 
-👉 **[Try AskSai here](your-streamlit-app-link)**
+👉 **[Try AskSai here](https://personalchatbot-hjnhtqk8ej6a6jx7vbnaho.streamlit.app/)**
 
 ---
 
