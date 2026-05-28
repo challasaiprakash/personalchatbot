@@ -156,7 +156,12 @@ def get_sheet():
         # instead of real newline characters — this ensures it always works.
         sa_info = dict(st.secrets["gcp_service_account"])
         if "private_key" in sa_info:
-            sa_info["private_key"] = sa_info["private_key"].replace("\\n", "\n")
+            key = sa_info["private_key"]
+            # Handle literal \n or real newlines from TOML
+            key = key.replace("\\n", "\n")
+            # Rebuild PEM cleanly: strip each line, drop blanks, rejoin
+            lines = [ln.strip() for ln in key.splitlines() if ln.strip()]
+            sa_info["private_key"] = "\n".join(lines) + "\n"
 
         creds = Credentials.from_service_account_info(sa_info, scopes=scopes)
         client = gspread.authorize(creds)
