@@ -213,7 +213,7 @@ def log_out_of_scope(question: str):
 
     worksheet, err = get_sheet()
     if err:
-        print(f"[SHEET] ❌ get_sheet() failed: {err}")
+        print(f"[SHEET] get_sheet() failed: {err}")
         return err
 
     try:
@@ -221,10 +221,10 @@ def log_out_of_scope(question: str):
         row_num = len(existing)
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         worksheet.append_row([row_num, timestamp, question, "Pending"])
-        print(f"[SHEET] ✅ Row {row_num} appended successfully at {timestamp}")
+        print(f"[SHEET] Row {row_num} appended successfully at {timestamp}")
         return None
     except Exception as exc:
-        print(f"[SHEET] ❌ append_row failed: {exc}")
+        print(f"[SHEET] append_row failed: {exc}")
         return str(exc)
 
 
@@ -419,7 +419,7 @@ def initialize_rag():
 # ─── Boot ─────────────────────────────────────────────────────────────────────
 rag_chain, rag_error = initialize_rag()
 if rag_error:
-    st.error(f"❌ Setup Error: {rag_error}")
+    st.error(f" Setup Error: {rag_error}")
     st.stop()
 
 
@@ -474,7 +474,7 @@ if user_query := st.chat_input("Ask anything about Sai..."):
             try:
                 answer = rag_chain.invoke({"input": user_query})
             except Exception as e:
-                answer = f"⚠️ Something went wrong: {str(e)}"
+                answer = f" Something went wrong: {str(e)}"
 
         st.markdown(answer)
         st.session_state.messages.append({"role": "assistant", "content": answer})
@@ -485,7 +485,7 @@ if user_query := st.chat_input("Ask anything about Sai..."):
         if matched_phrase:
             log_err = log_out_of_scope(user_query)
             if log_err:
-                st.warning(f"📋 Sheet logging failed: {log_err}")
+                st.warning(f" Sheet logging failed: {log_err}")
 
     st.rerun()
 
