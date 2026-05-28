@@ -118,10 +118,6 @@ SHEET_HEADERS = ["#", "Timestamp", "Question", "Status"]
 
 # ─── Config Helper (st.secrets ONLY) ─────────────────────────────────────────
 def get_config(key: str, default=None):
-    """
-    Reads exclusively from st.secrets (Streamlit Cloud → Advanced → Secrets).
-    TOML booleans are normalised to strings so callers can safely call .lower().
-    """
     try:
         val = st.secrets[key]
         return str(val) if isinstance(val, bool) else val
@@ -132,16 +128,19 @@ def get_config(key: str, default=None):
 def get_service_account_info():
     """
     Returns the GCP service account dict from st.secrets["service_account"].
-    Matches the [service_account] section in your Streamlit secrets.
+    Applies the critical fix: replaces literal \\n with real newlines in private_key.
+    Streamlit Cloud stores TOML secrets as literal \\n which breaks Google auth.
     """
     try:
-       info = dict(st.secrets["service_account"])
-       if info:
-           return info, None
+        info = dict(st.secrets["service_account"])
+        if info:
+            # ✅ FIX: Streamlit Cloud TOML stores \n as literal characters.
+            # Google auth needs real newline characters in the private key.
+            if "private_key" in info:
+                info["private_key"] = info["private_key"].replace("\\n", "\n")
+            return info, None
     except (KeyError, FileNotFoundError):
-       pass
-
-  
+        pass
 
     return None, (
         "Google service account credentials not found. "
