@@ -3,7 +3,7 @@ import re
 import streamlit as st
 from datetime import datetime
 
-# ── Local dev: load .env if python-dotenv is installed (ignored on Streamlit Cloud) ──
+# --Local dev: load .env if python-dotenv is installed (ignored on Streamlit Cloud) --
 try:
     from dotenv import load_dotenv
     load_dotenv()
@@ -40,7 +40,7 @@ try:
 except ImportError:
     from langchain_community.vectorstores import Chroma
 
-# ─── Page Config & Header ────────────────────────────────────────────────────
+#  Page Config & Header 
 st.set_page_config(page_title="AskSai", page_icon="🧠", layout="centered")
 
 st.markdown(
@@ -72,7 +72,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ─── Constants ────────────────────────────────────────────────────────────────
+# Constants 
 DATA_DIR = "data"
 DEFAULT_RESUME_PATH = os.path.join(DATA_DIR, "resume_and_projects.txt")
 DEFAULT_MODEL_ID = "Qwen/Qwen2.5-7B-Instruct"
@@ -123,14 +123,9 @@ OUT_OF_SCOPE_REPLY = (
 SHEET_HEADERS = ["#", "Timestamp", "Question", "Status"]
 
 
-# ─── Unified Config Helper ────────────────────────────────────────────────────
+#  Unified Config Helper
 def get_config(key: str, default=None):
-    """
-    Priority:
-      1. st.secrets  (Streamlit Cloud — secrets.toml)
-      2. os.environ  (.env file via python-dotenv, or system env)
-      3. default
-    """
+  # checks secrets first, then env, then falls back to default
     try:
         val = st.secrets[key]
         return str(val) if isinstance(val, bool) else val
@@ -165,9 +160,9 @@ def get_service_account_info():
     )
 
 
-# ─── Google Sheets Logger ─────────────────────────────────────────────────────
+#  Google Sheets Logger 
 def get_sheet():
-    """Authenticate and return (worksheet, error_string_or_None)."""
+    # returns (worksheet, err) — err is None if everything's fine
     if not GSPREAD_AVAILABLE:
         return None, "gspread / google-auth not installed."
 
@@ -208,7 +203,7 @@ def get_sheet():
 
 
 def log_out_of_scope(question: str):
-    """Append an out-of-scope question to Google Sheets. Returns error string or None."""
+    # log questions we couldn't answer so sai can review later
     print(f"\n[SHEET] Out-of-scope detected → logging: {question!r}")
 
     worksheet, err = get_sheet()
@@ -228,7 +223,7 @@ def log_out_of_scope(question: str):
         return str(exc)
 
 
-# ─── Resume Helpers ───────────────────────────────────────────────────────────
+#  Resume Helpers 
 def get_resume_path():
     if os.path.exists(DEFAULT_RESUME_PATH):
         return DEFAULT_RESUME_PATH
@@ -305,7 +300,7 @@ def create_lexical_retriever(splits, k=5):
     return RunnableLambda(retrieve)
 
 
-# ─── RAG Initialisation ───────────────────────────────────────────────────────
+# -- RAG Initialisation -----
 @st.cache_resource(show_spinner="⚙️ Setting up AskSai (one-time)...")
 def initialize_rag():
     resume_path = get_resume_path()
@@ -361,12 +356,13 @@ def initialize_rag():
         vectorstore = Chroma.from_documents(documents=retrieval_docs, embedding=embeddings)
         retriever = vectorstore.as_retriever(search_kwargs={"k": 8})
     except Exception as exc:
-        st.warning(f"Semantic embeddings unavailable — using keyword retrieval. Details: {exc}")
+        st.warning(f"embeddings didn't load, falling back to keyword search ({exc})")
         retriever = create_lexical_retriever(retrieval_docs, k=8)
 
     def retrieve_context(query):
         user_input = query["input"]
         intent = check_routing_intent(user_input)
+        # route to the right chunk set based on what they're asking
         if intent == "project" and project_docs:
             return format_docs(project_docs)
         if intent == "experience" and experience_docs:
@@ -416,14 +412,14 @@ def initialize_rag():
     return rag_chain, None
 
 
-# ─── Boot ─────────────────────────────────────────────────────────────────────
+#  Boot 
 rag_chain, rag_error = initialize_rag()
 if rag_error:
     st.error(f" Setup Error: {rag_error}")
     st.stop()
 
 
-# ─── Chat History ─────────────────────────────────────────────────────────────
+#  Chat History 
 if "messages" not in st.session_state:
     st.session_state.messages = [
         {
@@ -440,7 +436,7 @@ for msg in st.session_state.messages:
         st.markdown(msg["content"])
 
 
-# ─── Input & Response ─────────────────────────────────────────────────────────
+#  Input & Response 
 if user_query := st.chat_input("Ask anything about Sai..."):
     st.markdown(
         """
@@ -489,7 +485,7 @@ if user_query := st.chat_input("Ask anything about Sai..."):
 
     st.rerun()
 
-# ─── Idle alien animation ─────────────────────────────────────────────────────
+#  Idle alien animation 
 else:
     st.markdown(
         """
