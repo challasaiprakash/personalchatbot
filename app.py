@@ -78,6 +78,7 @@ DEFAULT_RESUME_PATH = os.path.join(DATA_DIR, "resume_and_projects.txt")
 DEFAULT_MODEL_ID = "Qwen/Qwen2.5-7B-Instruct"
 DEFAULT_EMBEDDING_MODEL_ID = "sentence-transformers/all-MiniLM-L6-v2"
 
+# phrases that hint the model couldn't find an answer in context
 OUT_OF_SCOPE_PHRASES = [
     "goes beyond what i currently have on file",
     "beyond what i currently have on file",
