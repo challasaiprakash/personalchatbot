@@ -65,8 +65,8 @@ st.markdown(
     }
     </style>
     <div class="asksai-header">
-        <h1>🧠 AskSai</h1>
-        <p>Your direct line to Sai's professional profile</p>
+        <h1>👤 AskSai</h1>
+        <p>Got questions about Sai? I've got answers.</p>
     </div>
     """,
     unsafe_allow_html=True,
@@ -425,8 +425,8 @@ if "messages" not in st.session_state:
         {
             "role": "assistant",
             "content": (
-                "👋 Hi there! I'm **AskSai** — your direct line to Sai's professional profile.\n\n"
-                "Ask me about Sai's skills, projects, experience, or tech stack!"
+                "👋 Hi! I'm AskSai — I know Sai's background pretty well.\n\n"
+                "Ask me about his skills, projects, or experience."
             ),
         }
     ]
