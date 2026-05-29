@@ -3,7 +3,7 @@ import re
 import streamlit as st
 from datetime import datetime
 
-# --Local dev: load .env if python-dotenv is installed (ignored on Streamlit Cloud) --
+# -- Local dev: load .env if python-dotenv is installed (ignored on Streamlit Cloud) --
 try:
     from dotenv import load_dotenv
     load_dotenv()
@@ -40,8 +40,8 @@ try:
 except ImportError:
     from langchain_community.vectorstores import Chroma
 
-#  Page Config & Header 
-st.set_page_config(page_title="AskSai", page_icon="🧠", layout="centered")
+# Page Config & Header
+st.set_page_config(page_title="AskSai", page_icon="👤", layout="centered")
 
 st.markdown(
     """
@@ -72,7 +72,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Constants 
+# --- config defaults
 DATA_DIR = "data"
 DEFAULT_RESUME_PATH = os.path.join(DATA_DIR, "resume_and_projects.txt")
 DEFAULT_MODEL_ID = "Qwen/Qwen2.5-7B-Instruct"
@@ -124,9 +124,8 @@ OUT_OF_SCOPE_REPLY = (
 SHEET_HEADERS = ["#", "Timestamp", "Question", "Status"]
 
 
-#  Unified Config Helper
 def get_config(key: str, default=None):
-  # checks secrets first, then env, then falls back to default
+    # checks secrets first, then env, then falls back to default
     try:
         val = st.secrets[key]
         return str(val) if isinstance(val, bool) else val
@@ -136,12 +135,7 @@ def get_config(key: str, default=None):
 
 
 def get_service_account_info():
-    """
-    Returns (service_account_dict, error_or_None).
-    Priority:
-      1. st.secrets["gcp_service_account"]  — Streamlit Cloud
-      2. service_account.json file          — local development
-    """
+    # tries streamlit secrets first, then falls back to local json file
     try:
         info = dict(st.secrets["gcp_service_account"])
         if info:
@@ -161,7 +155,7 @@ def get_service_account_info():
     )
 
 
-#  Google Sheets Logger 
+# --- Google Sheets Logger
 def get_sheet():
     # returns (worksheet, err) — err is None if everything's fine
     if not GSPREAD_AVAILABLE:
@@ -205,11 +199,11 @@ def get_sheet():
 
 def log_out_of_scope(question: str):
     # log questions we couldn't answer so sai can review later
-    print(f"\n[SHEET] Out-of-scope detected → logging: {question!r}")
+    print(f"logging unanswered q: {question}")
 
     worksheet, err = get_sheet()
     if err:
-        print(f"[SHEET] get_sheet() failed: {err}")
+        print(f"get_sheet failed: {err}")
         return err
 
     try:
@@ -217,14 +211,14 @@ def log_out_of_scope(question: str):
         row_num = len(existing)
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         worksheet.append_row([row_num, timestamp, question, "Pending"])
-        print(f"[SHEET] Row {row_num} appended successfully at {timestamp}")
+        print(f"sheet append ok, row {row_num}")
         return None
     except Exception as exc:
-        print(f"[SHEET] append_row failed: {exc}")
+        print(f"append failed: {exc}")
         return str(exc)
 
 
-#  Resume Helpers 
+# --- Resume Helpers
 def get_resume_path():
     if os.path.exists(DEFAULT_RESUME_PATH):
         return DEFAULT_RESUME_PATH
@@ -243,6 +237,7 @@ def format_docs(docs):
 
 
 def extract_project_docs(text, source):
+    # TODO: maybe handle nested project sections later
     pattern = re.compile(
         r"(PROJECT\s+\d+:\s.*?)(?=\nPROJECT\s+\d+:|\n={5,}|\Z)",
         re.IGNORECASE | re.DOTALL,
@@ -279,10 +274,17 @@ def check_routing_intent(query):
         "experience", "experiences", "professional", "history", "career",
         "employment", "job", "jobs", "workplace", "company", "companies", "role",
     }
+    education_keywords = {
+        "education", "educational", "school", "schooling", "college", "university",
+        "degree", "graduation", "graduate", "undergraduate", "studies", "studied",
+        "course", "courses", "major", "academics", "academic", "institute", "cgpa", "gpa",
+    }
     if query_tokens & project_keywords:
         return "project"
     elif query_tokens & experience_keywords:
         return "experience"
+    elif query_tokens & education_keywords:
+        return "education"
     return "general"
 
 
@@ -301,8 +303,8 @@ def create_lexical_retriever(splits, k=5):
     return RunnableLambda(retrieve)
 
 
-# -- RAG Initialisation -----
-@st.cache_resource(show_spinner="⚙️ Setting up AskSai (one-time)...")
+# --- RAG Initialisation
+@st.cache_resource(show_spinner="setting up AskSai...")
 def initialize_rag():
     resume_path = get_resume_path()
     if resume_path is None:
@@ -318,6 +320,8 @@ def initialize_rag():
     with open(resume_path, "r", encoding="utf-8") as f:
         resume_text = f.read()
 
+    # print(resume_text[:200])  # debug
+
     experience_chunks, is_exp_section = [], False
     for line in resume_text.split("\n"):
         if any(kw in line.lower() for kw in ("experience", "employment", "career")):
@@ -329,12 +333,30 @@ def initialize_rag():
 
     experience_text = "\n".join(experience_chunks) if experience_chunks else resume_text
 
+    # pull education section the same way we did for experience
+    education_chunks, is_edu_section = [], False
+    for line in resume_text.split("\n"):
+        if any(kw in line.lower() for kw in ("education", "academic", "university", "college")):
+            is_edu_section = True
+        elif any(kw in line.lower() for kw in ("experience", "project", "portfolio")):
+            is_edu_section = False
+        if is_edu_section and line.strip():
+            education_chunks.append(line)
+
+    education_text = "\n".join(education_chunks) if education_chunks else resume_text
+
     docs = [Document(page_content=resume_text, metadata={"source": resume_path})]
     project_docs = extract_project_docs(resume_text, resume_path)
     experience_docs = [
         Document(
             page_content=experience_text,
             metadata={"source": resume_path, "section": "experience"},
+        )
+    ]
+    education_docs = [
+        Document(
+            page_content=education_text,
+            metadata={"source": resume_path, "section": "education"},
         )
     ]
 
@@ -361,14 +383,16 @@ def initialize_rag():
         retriever = create_lexical_retriever(retrieval_docs, k=8)
 
     def retrieve_context(query):
-        user_input = query["input"]
-        intent = check_routing_intent(user_input)
+        q = query["input"]
+        intent = check_routing_intent(q)
         # route to the right chunk set based on what they're asking
         if intent == "project" and project_docs:
             return format_docs(project_docs)
         if intent == "experience" and experience_docs:
             return format_docs(experience_docs)
-        return format_docs(retriever.invoke(user_input))
+        if intent == "education" and education_docs:
+            return format_docs(education_docs)
+        return format_docs(retriever.invoke(q))
 
     model_id = get_config("HF_MODEL_ID", DEFAULT_MODEL_ID)
     endpoint = HuggingFaceEndpoint(
@@ -381,18 +405,13 @@ def initialize_rag():
     llm = ChatHuggingFace(llm=endpoint)
 
     system_prompt = (
-        "You are AskSai, a professional AI assistant representing Sai.\n"
-        "Answer questions using ONLY the provided context below.\n"
-        "Always refer to the person as 'Sai' — never use 'the candidate', 'he/she', or 'they'.\n"
-        "Use natural, confident language such as:\n"
-        "  - 'Sai has experience in...'\n"
-        "  - 'Sai built this project using...'\n"
-        "  - 'Sai's background includes...'\n"
-        "  - 'In this role, Sai was responsible for...'\n"
-        "If the question is outside the scope of the provided context, or is unrelated to Sai's "
-        "professional profile, respond with EXACTLY this message and nothing else:\n"
+        "You are AskSai, an assistant that knows Sai's professional background.\n"
+        "Only answer from the context provided — don't make stuff up.\n"
+        "Always say 'Sai' not 'the candidate' or 'he/she'.\n"
+        "Keep it natural, like: 'Sai worked on...', 'Sai has experience with...'\n"
+        "If the question has nothing to do with Sai's profile, reply with exactly:\n"
         f"  '{OUT_OF_SCOPE_REPLY}'\n"
-        "Keep responses concise, polite, and factual.\n\n"
+        "Be concise.\n\n"
         "Context:\n{context}"
     )
 
@@ -413,21 +432,20 @@ def initialize_rag():
     return rag_chain, None
 
 
-#  Boot 
 rag_chain, rag_error = initialize_rag()
 if rag_error:
-    st.error(f" Setup Error: {rag_error}")
+    st.error(f"setup error: {rag_error}")
     st.stop()
 
 
-#  Chat History 
+# --- Chat History
 if "messages" not in st.session_state:
     st.session_state.messages = [
         {
             "role": "assistant",
             "content": (
-                "👋 Hi! I'm AskSai — I know Sai's background pretty well.\n\n"
-                "Ask me about his skills, projects, or experience."
+                "Hi! I'm AskSai — I know Sai's background pretty well.\n\n"
+                "Ask me about his skills, projects, experience, or education."
             ),
         }
     ]
@@ -437,7 +455,7 @@ for msg in st.session_state.messages:
         st.markdown(msg["content"])
 
 
-#  Input & Response 
+# --- Input & Response
 if user_query := st.chat_input("Ask anything about Sai..."):
     st.markdown(
         """
@@ -467,26 +485,26 @@ if user_query := st.chat_input("Ask anything about Sai..."):
         st.markdown(user_query)
 
     with st.chat_message("assistant"):
-        with st.spinner("Looking up Sai's profile..."):
+        with st.spinner("looking up Sai's profile..."):
             try:
                 answer = rag_chain.invoke({"input": user_query})
             except Exception as e:
-                answer = f" Something went wrong: {str(e)}"
+                answer = f"something went wrong: {str(e)}"
 
         st.markdown(answer)
         st.session_state.messages.append({"role": "assistant", "content": answer})
 
-        # ── Out-of-scope detection + logging ──
+        # out-of-scope detection + logging
         lowered = answer.lower()
         matched_phrase = next((p for p in OUT_OF_SCOPE_PHRASES if p in lowered), None)
         if matched_phrase:
             log_err = log_out_of_scope(user_query)
             if log_err:
-                st.warning(f" Sheet logging failed: {log_err}")
+                st.warning(f"sheet logging failed: {log_err}")
 
     st.rerun()
 
-#  Idle alien animation 
+# --- Idle alien animation
 else:
     st.markdown(
         """
