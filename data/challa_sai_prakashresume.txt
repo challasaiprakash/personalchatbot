@@ -8,16 +8,21 @@ Email Contacts: challasaiprakashcsp@gmail.com
 Primary Phone: (+420) 778-596-622
 Secondary Phone: (+91) 8971-615857
 LinkedIn Profile URL: www.linkedin.com/in/challasp
-Core Specializations: Machine Learning, AI Modeling, Predictive Analytics, Computer Vision, Deep Learning, Time-Series Modeling, Intelligent System Design.
+Portfolio URL: https://tinyurl.com/portfoliochalla
+Core Specializations: Machine Learning, AI Modeling, Predictive Analytics, Computer Vision, Deep Learning, Time-Series Modeling, Retrieval-Augmented Generation (RAG), Agentic AI Pipelines, Intelligent System Design.
 Spoken Languages: English (C1 Professional Proficiency), Czech (Basic)
+
+Summary: Research-focused AI/ML engineer specializing in machine learning, AI modelling, and predictive analytics. Proficient in Python, SQL, and Power BI, with strong foundations in statistical analysis and data visualization. Experienced in developing AI-driven solutions for computer vision, defect detection, RAG/agentic systems, and solar radiation forecasting using LSTM, NARX, and ensemble learning models. Skilled in deep learning, time-series modelling, and intelligent system design to solve complex industrial and scientific challenges.
 
 ================================================================================
 TECHNICAL SKILLS & KEY COMPETENCIES
 ================================================================================
 - Programming Languages: Python, SQL
-- Data Visualization & Business Intelligence: Power BI, Microsoft Fabric
+- AI/LLM Engineering & Automation: RAG (Retrieval-Augmented Generation), LangChain, LangGraph, ChromaDB, Streamlit, n8n automation, GitHub Actions
+- Data Visualization & Business Intelligence: Power BI, Microsoft Fabric, Data Analysis, Data Visualisation
 - Machine Learning & Deep Learning Frameworks: LSTM, NARX, CNN (Convolutional Neural Networks), Instance Segmentation, Named Entity Recognition (NER), Ensemble Learning Models
-- Domain Expertise: Machine Vision, Defect Detection, Predictive Maintenance, Statistical Analysis, Data Preparation, Time-Series Forecasting, Intelligent Control Systems
+- Domain Expertise: Machine Vision, Defect Detection, Predictive Maintenance, Statistical Analysis, Data Preparation, Time-Series Forecasting, Intelligent Control Systems, Acoustic/Signal Analytics
+- Languages: English (C1), Czech (Basic)
 
 ================================================================================
 EDUCATION DETAILS
@@ -56,68 +61,101 @@ Timeline: January 2021 - February 2021
 DETAILED PROJECT REPOSITORY
 ================================================================================
 
-PROJECT 1: AI-Based Water Leakage & Fault Detection System for Swimming Pool Equipment
-- Category: Industry Collaboration & Applied AI (Doctoral Research)
-- Timeline: October 2025 - May 2026
-- Core Tech Stack: Python, Machine Learning, Signal Preprocessing, Audio/Acoustic Data Analytics, Predictive Maintenance
+PROJECT 1: Multi-Document Research Assistant — RAG-Powered Research Chatbot
+- Category: Applied AI Engineering / Agentic AI
+- Timeline: April 2026
+- Core Tech Stack: Python, Streamlit, LangGraph, LangChain, ChromaDB, Groq, FastEmbed (ONNX), Ollama, PyMuPDF
 - Key Deliverables & Achievements:
-  * Designed and implemented an AI-powered fault detection system to monitor swimming pool motor and filter configurations in real time.
-  * Developed a sound-based machine learning model analyzing motor and filter acoustic signals to accurately classify operational states.
-  * Successfully detects real-time water leakage conditions, motor malfunctions, and filter irregularities.
-  * Built an end-to-end data pipeline managing audio data collection, automated signal preprocessing, feature extraction, and model training.
-  * Result: Replaced manual equipment inspections with automated predictive maintenance pipelines.
+  * Built a Streamlit-based RAG application enabling users to upload multiple research papers (PDF, DOCX, CSV, TXT) or paste article URLs and ask questions across all sources simultaneously.
+  * Designed a LangGraph-driven Classify → Retrieve → Answer pipeline that routes each query into one of six question types (comparison, conclusion, methodology, etc.) with tailored prompting for more accurate answers.
+  * Implemented a 7-model Groq fallback queue with local Ollama (Llama3) backup, ensuring high availability even under API rate limits.
+  * Engineered a custom PDF title-extraction cascade using PyMuPDF (font-size span analysis) to accurately identify paper titles for citation mapping, without relying on manual metadata.
+  * Integrated ChromaDB for semantic vector search (top-k retrieval) with FastEmbed ONNX embeddings, avoiding heavy PyTorch dependencies for lightweight deployment.
+  * Added a smart numbered citation system, sliding memory window for multi-turn conversations, and a RAG-internals debug panel showing retrieved chunks and relevance scores.
+  * Deployed the app live on Streamlit Community Cloud, delivering an end-to-end research assistant usable by anyone via browser.
+  * GitHub: github.com/challasaiprakash/Researcher-Assistant
 
-PROJECT 2: Automated Detection, Segmentation & Counting of Metallic Plates in Warehouse Environments
+PROJECT 2: AI-Powered Interactive Resume Chatbot
+- Category: Applied AI Engineering / Agentic AI
+- Timeline: April 2026
+- Core Tech Stack: Python, LangChain, Streamlit, Sentence-Transformer Embeddings, Vector Database, Qwen2.5-7B-Instruct (HuggingFace Inference Endpoint), Google Sheets API
+- Key Deliverables & Achievements:
+  * Developed an AI-powered interactive resume chatbot that enables recruiters and visitors to query professional background, skills, and project details through natural language conversation.
+  * Designed a Retrieval-Augmented Generation (RAG) pipeline using LangChain, embedding resume content with sentence-transformer embeddings and storing it in a vector database to surface the most relevant context — including experience, education, and project highlights — for accurate, role-specific responses.
+  * Built an intent-aware query router that classifies incoming questions (projects, experience, or general profile) and directs them to the appropriate content subset, along with a keyword-based fallback retriever that keeps the app responsive if the embedding service is unavailable.
+  * Integrated an open-source large language model (Qwen2.5-7B-Instruct) hosted via a HuggingFace inference endpoint, orchestrated through LangChain, to generate grounded, hallucination-resistant answers from the retrieved resume content.
+  * Built a full-stack deployment with a responsive Streamlit front-end, including out-of-scope question detection with automatic logging to Google Sheets for continuous improvement, ensuring a seamless experience across desktop and mobile.
+  * Demonstrated end-to-end ownership of the project — from RAG pipeline design and model integration to UI design and deployment — showcasing applied skills in NLP, information retrieval, and production-ready AI application development.
+
+PROJECT 3: AI Algorithm for Automated Detection, Segmentation & Counting of Metallic Plates in Warehouse Environments
 - Category: Industry Collaboration & Applied AI (Doctoral Research)
 - Timeline: January 2026 - June 2026
 - Core Tech Stack: Python, Computer Vision, Instance Segmentation, Image Processing Pipelines, ML Evaluation Metrics (Precision, Recall, mAP)
 - Key Deliverables & Achievements:
-  * Engineered a custom computer vision AI algorithm to automatically detect, isolate, and count individual metallic plates stored in warehouse locations.
-  * Implemented an advanced instance segmentation model capable of accurately handling variable warehouse lighting conditions, stacked materials, and overlapping objects.
-  * Managed the full ML pipeline lifecycle: raw image data collection, preprocessing, model training, and performance validation using Mean Average Precision (mAP).
-  * Result: Automated warehouse inventory counting, eliminating manual tracking errors.
+  * Developed a computer vision AI algorithm to automatically detect, segment, and count metallic plates within a warehouse environment, eliminating the need for manual stock counting and reducing inventory errors.
+  * Implemented an instance segmentation model to precisely identify and isolate individual metallic plates from complex warehouse imagery, handling variable lighting conditions, stacked arrangements, and overlapping objects.
+  * Designed and trained the full ML pipeline — covering image data collection, preprocessing, model training, and evaluation using metrics including precision, recall, and mean average precision (mAP) — delivering a reliable, production-ready inventory automation solution.
 
-PROJECT 3: Intelligent Contract Processing Pipeline with NER-Based Data Extraction
-- Category: Applied AI Engineering
+PROJECT 4: AI-Based Water Leakage & Fault Detection System for Swimming Pool Equipment
+- Category: Industry Collaboration & Applied AI (Doctoral Research)
+- Timeline: October 2025 - May 2026
+- Core Tech Stack: Python, Machine Learning, Signal Preprocessing, Audio/Acoustic Data Analytics, Predictive Maintenance
+- Key Deliverables & Achievements:
+  * Designed and implemented an AI-powered fault detection system to monitor swimming pool motor and filter setups, identifying water leakage conditions and assessing component health in real time.
+  * Developed a sound-based machine learning model that analyses acoustic signals from motors and filters to classify operational states — detecting the presence of water, motor malfunctions, and filter irregularities with high accuracy.
+  * Built an end-to-end pipeline covering audio data collection, signal preprocessing, feature extraction, and model training, enabling automated predictive maintenance and reducing the need for manual inspection of pool equipment.
+  * Result: Replaced manual equipment inspections with automated predictive maintenance pipelines.
+
+PROJECT 5: Intelligent Contract Processing Pipeline with NER-Based Data Extraction
+- Category: Applied AI Engineering (Doctoral Researcher, Industry Collaboration)
 - Timeline: December 2024 - June 2025
 - Core Tech Stack: Python, Multilingual NLP, Named Entity Recognition (NER), Custom Text Extraction, DeepL API, JSON, Excel Automation (Macros), GUI Development
 - Key Deliverables & Achievements:
-  * Architected an end-to-end automated pipeline to process unstructured Czech manufacturing contracts.
-  * Integrated DeepL translation layers into a custom NLP token extraction framework to isolate specialized metal dimensions, structural styles, and production parameters.
-  * Designed and trained a high-precision Named Entity Recognition (NER) model targeting complex customer details and raw product technical specifications.
-  * Structured the final extracted entities into clean, standardized JSON files, directly integrating outputs into legacy macro-enabled Excel operations tools.
-  * Formed a desktop real-time monitoring Graphical User Interface (GUI) in Python to visualize contract document processing stages.
+  * Developed an end-to-end automated system to process Czech manufacturing contracts, eliminating manual data entry and accelerating order fulfilment workflows.
+  * Built a multilingual NLP pipeline integrating DeepL translation and custom text extraction to identify metal dimensions, styles, and production parameters from unstructured documents.
+  * Designed and trained a custom Named Entity Recognition (NER) model to automatically extract product specifications and customer details with high precision.
+  * Structured extracted data into standardized JSON format and integrated outputs with macro-enabled Excel tools used in legacy manufacturing operations.
+  * Created a Python-based real-time monitoring GUI to track document processing stages, improving operational visibility and workflow reliability.
   * Result: Eradicated manual contract entry mistakes and accelerated operational order fulfillment.
 
-PROJECT 4: Image Preprocessing for Neural Network Input (Master's Thesis)
+PROJECT 6: Image Preprocessing for Neural Network Input (Master's Thesis)
 - Category: Academic Research & Computer Vision
 - Timeline: June 2023 - May 2024
 - Core Tech Stack: Python, Convolutional Neural Networks (CNN), Deep Learning, Image Filters, Power BI, Data Diagnostics
 - Key Deliverables & Achievements:
-  * Designed and optimized a comprehensive image preprocessing pipeline using numerical filters to discover surface defects across industrial datasets.
-  * Trained a deep learning Convolutional Neural Network (CNN) classifier utilizing the filtered and balanced image inputs.
-  * Conducted exhaustive model evaluations using strict metrics: accuracy, sensitivity, precision, execution runtime, and GPU memory utilization.
-  * Utilized data analysis tools like Power BI to visualize performance trends and pinpoint the ultimate sequence of preprocessing functions for large datasets.
+  * Implemented an image preprocessing pipeline using filters to identify defects in datasets.
+  * Trained a Convolutional Neural Network (CNN) model with the preprocessed data.
+  * Evaluated CNN performance using metrics such as accuracy, sensitivity, precision, execution time, and memory usage.
+  * Analyzed metric data to determine the optimal preprocessing sequence for best output.
+  * Demonstrated skills in image processing, data preparation, and deep learning model evaluation.
+  * Note: This research was later extended and published as a journal article, "Optimized image preprocessing strategies for enhanced neural network-based defect detection in industrial automation," in Scientific Reports (Nature Portfolio).
 
-PROJECT 5: Solar Powered Weather Station
+PROJECT 7: Solar Powered Weather Station
 - Category: Freelance Engineering Project
 - Timeline: February 2023 - June 2023
 - Core Tech Stack: Internet of Things (IoT), Wireless Transmission Protocols, Data Engineering, Energy-Efficient Algorithms
 - Key Deliverables & Achievements:
-  * Built a completely self-sustaining, solar-powered environmental weather station tracking telemetry.
-  * Integrated multi-sensor arrays capturing live temperature, ambient humidity, and barometric pressure data.
-  * Developed efficient power management and low-overhead wireless data transmission protocols to stream metrics securely to a central web server.
-  * Constructed remote web dashboard and mobile application interfaces for live environmental data streams.
+  * Designed and implemented a solar-powered weather station using IoT technology for real-time environmental monitoring.
+  * Integrated sensors for temperature, humidity, and pressure, with wireless data transmission to a central server.
+  * Developed energy-efficient algorithms for power management and optimized data transmission protocols.
+  * Enabled remote access to weather data through web and mobile interfaces.
 
-PROJECT 6: Smart IoT-Based Health Monitoring for Quarantined COVID-19 Patients (Bachelor's Thesis)
+PROJECT 8: Smart IoT-Based Health Monitoring for Quarantined COVID-19 Patients (Bachelor's Thesis)
 - Category: Academic Research & Embedded Systems
-- Timeline: January 2021 - August 2021
+- Timeline: June 2020 - August 2021
 - Core Tech Stack: Internet of Things (IoT), Biosensors, Embedded Systems, Power Optimization Algorithms, Data Analytics
 - Key Deliverables & Achievements:
-  * Programmed a remote medical telemetry system tracking vitals of quarantined patients during the global pandemic.
-  * Integrated responsive hardware sensors tracking real-time Heart Rate, SpO2 Blood Oxygen saturation levels, and environment states.
-  * Optimized low-power management software to guarantee continuous, uninterrupted sensor array tracking.
-  * Delivered automated data insights helping healthcare specialists make critical decisions efficiently.
+  * Developed and implemented a Smart IoT-based health monitoring system for quarantined COVID-19 patients.
+  * Specially designed to monitor heart rate, SpO2 levels, and environmental conditions remotely.
+  * Integrated sensors and IoT devices for real-time data transmission and analysis.
+  * Optimized power management algorithms to ensure continuous operation.
+  * Facilitated decision-making in critical situations through data-driven insights.
+  * Enhanced patient safety and healthcare efficiency during the global pandemic.
+
+================================================================================
+PUBLICATIONS
+================================================================================
+- "Optimized image preprocessing strategies for enhanced neural network-based defect detection in industrial automation" — Scientific Reports (Nature Portfolio). Co-authored with Koziorek, Hameed, Macháček, and others.
 
 ================================================================================
 JOB SIMULATIONS & ADDITIONAL EXPERIENCE
