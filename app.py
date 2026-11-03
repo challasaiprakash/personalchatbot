@@ -28,12 +28,8 @@ from langchain_core.runnables import RunnableLambda
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 # --- LangChain Vector Storage & Open-Source Embeddings ---
-from langchain_huggingface import (
-    ChatHuggingFace,
-    HuggingFaceEmbeddings,
-    HuggingFaceEndpoint,
-    HuggingFaceEndpointEmbeddings,
-)
+from langchain_community.embeddings import FastEmbedEmbeddings
+from langchain_groq import ChatGroq
 
 try:
     from langchain_chroma import Chroma
@@ -75,7 +71,7 @@ st.markdown(
 # --- config defaults
 DATA_DIR = "data"
 DEFAULT_RESUME_PATH = os.path.join(DATA_DIR, "resume_and_projects.txt")
-DEFAULT_MODEL_ID = "Qwen/Qwen2.5-7B-Instruct"
+DEFAULT_MODEL_ID = "openai/gpt-oss-20b"
 DEFAULT_EMBEDDING_MODEL_ID = "sentence-transformers/all-MiniLM-L6-v2"
 
 # phrases that hint the model couldn't find an answer in context
@@ -310,10 +306,10 @@ def initialize_rag():
     if resume_path is None:
         return None, "No .txt resume/profile file was found in the data folder."
 
-    hf_token = get_config("HUGGINGFACEHUB_API_TOKEN")
-    if not hf_token:
+    groq_api_key = get_config("GROQ_API_KEY")
+    if not groq_api_key:
         return None, (
-            "HUGGINGFACEHUB_API_TOKEN is missing. "
+            "GROQ_API_KEY is missing. "
             "Add it to .env locally or to secrets.toml on Streamlit Cloud."
         )
 
@@ -365,17 +361,8 @@ def initialize_rag():
     retrieval_docs = project_docs + general_splits
 
     try:
-        embedding_model = get_config("HF_EMBEDDING_MODEL_ID", DEFAULT_EMBEDDING_MODEL_ID)
-        use_local = get_config("USE_LOCAL_EMBEDDINGS", "false").lower() in {"1", "true", "yes"}
-
-        if use_local:
-            embeddings = HuggingFaceEmbeddings(model_name=embedding_model)
-        else:
-            embeddings = HuggingFaceEndpointEmbeddings(
-                model=embedding_model,
-                task="feature-extraction",
-                huggingfacehub_api_token=hf_token,
-            )
+        embedding_model = get_config("EMBEDDING_MODEL_ID", DEFAULT_EMBEDDING_MODEL_ID)
+        embeddings = FastEmbedEmbeddings(model_name=embedding_model)
         vectorstore = Chroma.from_documents(documents=retrieval_docs, embedding=embeddings)
         retriever = vectorstore.as_retriever(search_kwargs={"k": 8})
     except Exception as exc:
@@ -394,15 +381,13 @@ def initialize_rag():
             return format_docs(education_docs)
         return format_docs(retriever.invoke(q))
 
-    model_id = get_config("HF_MODEL_ID", DEFAULT_MODEL_ID)
-    endpoint = HuggingFaceEndpoint(
-        repo_id=model_id,
-        task="conversational",
+    model_id = get_config("GROQ_MODEL_ID", DEFAULT_MODEL_ID)
+    llm = ChatGroq(
+        model=model_id,
         temperature=0.1,
-        max_new_tokens=1024,
-        huggingfacehub_api_token=hf_token,
+        max_tokens=1024,
+        api_key=groq_api_key,
     )
-    llm = ChatHuggingFace(llm=endpoint)
 
     system_prompt = (
         "You are AskSai, an assistant that knows Sai's professional background.\n"
