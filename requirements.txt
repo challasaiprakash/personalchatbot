@@ -4,14 +4,11 @@ langchain
 langchain-core
 langchain-community
 langchain-text-splitters
-langchain-huggingface
+langchain-groq
 langchain-chroma
 chromadb
-sentence-transformers
-huggingface_hub
+fastembed
 gspread
 google-auth
 pysqlite3-binary
 protobuf==3.20.3
-torch
-torchvision
