@@ -1,12 +1,12 @@
 # 🧠 AskSai — AI Resume Chatbot
 
-
 > An AI-powered chatbot that answers questions about my professional profile using RAG (Retrieval-Augmented Generation) and LangChain.
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue?style=flat-square)
 ![LangChain](https://img.shields.io/badge/LangChain-RAG-brightgreen?style=flat-square)
 ![Streamlit](https://img.shields.io/badge/Streamlit-Cloud-red?style=flat-square)
-![HuggingFace](https://img.shields.io/badge/HuggingFace-Qwen2.5--7B-yellow?style=flat-square)
+![Groq](https://img.shields.io/badge/LLM-Groq%20gpt--oss--20b-orange?style=flat-square)
+![FastEmbed](https://img.shields.io/badge/Embeddings-FastEmbed-teal?style=flat-square)
 ![ChromaDB](https://img.shields.io/badge/VectorStore-ChromaDB-purple?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square)
 
@@ -20,15 +20,25 @@
 
 ## 💡 What Is AskSai?
 
-AskSai is a conversational AI chatbot that acts as a smart, interactive version of my resume. Instead of scrolling through a PDF, anyone — recruiters, collaborators, or curious visitors — can simply ask questions in plain English and get instant, accurate answers about my:
+AskSai is a conversational AI chatbot that acts as a smart, interactive version of my resume. Instead of scrolling through a PDF, anyone — recruiters, collaborators, or curious visitors — can ask questions in plain English and get instant answers about my:
 
-- 🛠️ **Projects & Tech Stack**
+- 🔬 **Research & Publications**
+- 🛠️ **Projects & Tech Stack** (10 projects across computer vision, audio ML, NLP, forecasting, and LLM apps)
 - 💼 **Work Experience**
 - 🎓 **Education**
-- 📬 **Contact Information**
 - 🧰 **Skills & Tools**
+- 🎯 **Career Interests**
+- 📬 **Contact Information**
 
 Built to showcase a real-world, end-to-end RAG pipeline using open-source tools.
+
+### 💬 Try asking
+
+- *"What is Sai's PhD research about?"*
+- *"Has Sai worked on computer vision projects with industry?"*
+- *"Tell me about his Scientific Reports paper."*
+- *"What results did the thermal storage forecasting project achieve?"*
+- *"What roles is Sai open to?"*
 
 ---
 
@@ -46,15 +56,15 @@ Resume (.txt file)
                   │
                   ▼
        ChromaDB Vector Store
-       (sentence-transformers/all-MiniLM-L6-v2 embeddings)
+       (FastEmbed embeddings)
                   │
                   ▼
          Intent Router
          (Project / Experience / General)
                   │
                   ▼
-       Qwen2.5-7B-Instruct
-       (via HuggingFace Endpoint)
+       openai/gpt-oss-20b
+       (via Groq API)
                   │
                   ▼
           AskSai Response
@@ -67,8 +77,8 @@ Resume (.txt file)
 | Layer            | Technology                                      |
 |------------------|-------------------------------------------------|
 | Framework        | LangChain (Core, Text Splitters, Runnables)     |
-| LLM              | Qwen2.5-7B-Instruct (HuggingFace Endpoint)      |
-| Embeddings       | sentence-transformers/all-MiniLM-L6-v2          |
+| LLM              | openai/gpt-oss-20b (Groq API)                   |
+| Embeddings       | FastEmbed (lightweight ONNX embeddings)         |
 | Vector Store     | ChromaDB                                        |
 | UI               | Streamlit                                       |
 | Out-of-scope Log | Google Sheets (gspread + GCP Service Account)   |
@@ -79,16 +89,16 @@ Resume (.txt file)
 ## ✨ Key Features
 
 ### 🔍 RAG Pipeline
-Retrieves the most semantically relevant chunks from the resume before passing context to the LLM — keeping responses accurate, grounded, and hallucination-free.
+Retrieves the most semantically relevant chunks from the resume before passing context to the LLM, so answers stay grounded in what the resume actually says.
 
 ### 🧭 Intent-Aware Query Routing
-A custom query classifier detects whether the user is asking about **projects**, **work experience**, or **general profile info** and routes to the appropriate document subset for sharper, more relevant answers.
+A custom query classifier detects whether the user is asking about **projects**, **work experience**, or **general profile info** and routes to the matching document subset for sharper, more relevant answers.
 
 ### 🔤 Fallback Lexical Retriever
-If semantic embeddings are unavailable (e.g., API quota exceeded), the system falls back to a keyword-based BM25-style retriever — ensuring the app never goes down.
+If semantic retrieval is unavailable, the system falls back to a keyword-based BM25-style retriever, so the app keeps answering.
 
 ### 📋 Out-of-Scope Detection + Auto-Logging
-When a question falls outside the resume context, AskSai gracefully redirects the user and **automatically logs the question to a Google Sheet** — so I can review gaps and continuously improve coverage.
+When a question falls outside the resume, AskSai politely redirects the user and **automatically logs the question to a Google Sheet**, so I can review gaps and keep improving coverage.
 
 ### 💬 Streamlit Chat UI
 Clean, interactive chat interface with persistent session history, custom CSS styling, and an animated alien mascot 👽 that walks across the input bar while idle.
@@ -100,8 +110,8 @@ Clean, interactive chat interface with persistent session history, custom CSS st
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/your-username/asksai.git
-cd asksai
+git clone https://github.com/challasaiprakash/personalchatbot.git
+cd personalchatbot
 ```
 
 ### 2. Install dependencies
@@ -119,12 +129,16 @@ data/
 └── resume_and_projects.txt
 ```
 
+> **Updating the bot's knowledge:** replace `resume_and_projects.txt` and restart the app (or clear the Streamlit cache) so the vector store is rebuilt from the new file.
+
 ### 4. Configure environment variables
 
 Create a `.env` file in the project root:
 
+Get a free API key at [console.groq.com](https://console.groq.com/).
+
 ```env
-HUGGINGFACEHUB_API_TOKEN=your_huggingface_token_here
+GROQ_API_KEY=your_groq_api_key_here
 GOOGLE_SHEET_ID=your_google_sheet_id_here        # optional, for out-of-scope logging
 ```
 
@@ -149,7 +163,7 @@ streamlit run app.py
 3. Add secrets in the Streamlit Cloud dashboard under **Settings → Secrets**:
 
 ```toml
-HUGGINGFACEHUB_API_TOKEN = "your_token"
+GROQ_API_KEY = "your_groq_api_key"
 GOOGLE_SHEET_ID = "your_sheet_id"
 
 [gcp_service_account]
@@ -166,7 +180,7 @@ client_email = "..."
 ## 📁 Project Structure
 
 ```
-asksai/
+personalchatbot/
 │
 ├── app.py                        # Main Streamlit application
 ├── data/
@@ -187,11 +201,11 @@ streamlit
 langchain
 langchain-core
 langchain-text-splitters
-langchain-huggingface
+langchain-groq
+langchain-community
 langchain-chroma
 chromadb
-sentence-transformers
-huggingface-hub
+fastembed
 gspread
 google-auth
 python-dotenv
@@ -215,21 +229,21 @@ __pycache__/
 
 ## 📌 Why I Built This
 
-This project was built to demonstrate a **practical, end-to-end RAG implementation** using open-source tools — covering the full pipeline from document ingestion and semantic chunking, to vector retrieval, intent routing, and LLM response generation — applied to a real-world personal use case.
+This project demonstrates a **practical, end-to-end RAG implementation** using open-source tools, covering the full pipeline from document ingestion and semantic chunking to vector retrieval, intent routing, and LLM response generation, applied to a real personal use case.
 
-It's also a living portfolio piece: as my experience grows, the chatbot's knowledge updates automatically with the resume file.
+It's also a living portfolio piece: as my experience grows, I update the resume file and the chatbot's knowledge grows with it.
 
 ---
 
 ## 🙋 About Me
 
-Built by **Sai**
+Built by **Ing. Sai Prakash Challa**, PhD researcher in machine learning and computer vision at VSB – Technical University of Ostrava, Czechia.
 
-- 🔗 [LinkedIn](www.linkedin.com/in/challasp)
-- 📧 your-CHALLASAIPRAKASHCSP@MAIL.COM
+- 🔗 [LinkedIn](https://www.linkedin.com/in/challasp/)
+- 🌐 [Portfolio](https://tinyurl.com/portfoliochalla)
+- 📚 [My other app: Multi-Document Research Assistant](https://researchassistantv2-79aaycvac74meqppdjn92e.streamlit.app/)
+- 📧 [challasaiprakashcsp@gmail.com](mailto:challasaiprakashcsp@gmail.com)
 
 ---
 
 *If you found this useful, drop a ⭐ on the repo!*
-
-
