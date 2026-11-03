@@ -2,43 +2,52 @@
 CANDIDATE PROFILE SUMMARY
 ================================================================================
 Full Name: Ing. Sai Prakash Challa
-Title: AI Engineer & Scientific Researcher
+Title: ML & Computer Vision Researcher | AI Engineer
 Location: Ostrava, Czechia
 Email Contacts: challasaiprakashcsp@gmail.com
 Primary Phone: (+420) 778-596-622
 Secondary Phone: (+91) 8971-615857
 LinkedIn Profile URL: www.linkedin.com/in/challasp
 Portfolio URL: https://tinyurl.com/portfoliochalla
-Core Specializations: Machine Learning, AI Modeling, Predictive Analytics, Computer Vision, Deep Learning, Time-Series Modeling, Retrieval-Augmented Generation (RAG), Agentic AI Pipelines, Intelligent System Design.
+Core Specializations: Computer Vision, Industrial Defect Detection, Synthetic Data & Digital Twins, Sim-to-Real Transfer, Genetic Algorithms, Machine Learning, Deep Learning, Time-Series Forecasting, Retrieval-Augmented Generation (RAG), Agentic AI Pipelines, NLP.
 Spoken Languages: English (C1 Professional Proficiency), Czech (Basic)
 
-Summary: Research-focused AI/ML engineer specializing in machine learning, AI modelling, and predictive analytics. Proficient in Python, SQL, and Power BI, with strong foundations in statistical analysis and data visualization. Experienced in developing AI-driven solutions for computer vision, defect detection, RAG/agentic systems, and solar radiation forecasting using LSTM, NARX, and ensemble learning models. Skilled in deep learning, time-series modelling, and intelligent system design to solve complex industrial and scientific challenges.
+Summary: Doctoral researcher in machine learning and computer vision at VSB - Technical University of Ostrava, specializing in industrial defect detection, synthetic data, and digital twins. First author of a 2026 Scientific Reports paper on genetic-algorithm-optimized image preprocessing for CNN-based defect detection. His PhD research uses genetic algorithms to optimize digital twins so that synthetic images rendered in simulation can train defect detectors that work on real production parts (sim-to-real). Alongside research, he has delivered applied AI projects with industry partners and internal teams, covering warehouse instance segmentation, acoustic water-leakage and fault detection, NER-based contract extraction, and real-time energy forecasting for thermal storage. He also builds and deploys RAG/LLM applications with LangChain, LangGraph, and Streamlit.
+
+Career Interests: Open to ML Engineer, Computer Vision Engineer, and Applied AI Research roles, and to industry research collaborations.
 
 ================================================================================
 TECHNICAL SKILLS & KEY COMPETENCIES
 ================================================================================
 - Programming Languages: Python, SQL
-- AI/LLM Engineering & Automation: RAG (Retrieval-Augmented Generation), LangChain, LangGraph, ChromaDB, Streamlit, n8n automation, GitHub Actions
+- Computer Vision: CNNs, Instance Segmentation, Defect Detection, Image Preprocessing, DINOv2 Feature Embeddings
+- Synthetic Data & Digital Twins: Blender, NVIDIA Omniverse, Physics-Based Rendering, Sim-to-Real Transfer
+- Optimization: Genetic Algorithms, Multi-Objective Fitness Design
+- Machine Learning: scikit-learn, Gradient Boosting, Ensemble Learning, Grouped Cross-Validation (GroupKFold), Feature Engineering
+- Time-Series Forecasting: SARIMA, GARCH, LSTM, NARX, Ensemble Models
+- AI/LLM Engineering & Automation: RAG, LangChain, LangGraph, ChromaDB, Hugging Face, Ollama, Groq, Streamlit, n8n Automation, GitHub Actions
+- NLP: Named Entity Recognition (NER), Multilingual Text Processing, DeepL API
+- Audio/Signal Analytics: Acoustic Signal Preprocessing, Feature Extraction, Predictive Maintenance
+- Applications & GUIs: PyQt5, Python GUIs, Excel Automation
 - Data Visualization & Business Intelligence: Power BI, Microsoft Fabric, Data Analysis, Data Visualisation
-- Machine Learning & Deep Learning Frameworks: LSTM, NARX, CNN (Convolutional Neural Networks), Instance Segmentation, Named Entity Recognition (NER), Ensemble Learning Models
-- Domain Expertise: Machine Vision, Defect Detection, Predictive Maintenance, Statistical Analysis, Data Preparation, Time-Series Forecasting, Intelligent Control Systems, Acoustic/Signal Analytics
 - Languages: English (C1), Czech (Basic)
 
 ================================================================================
 EDUCATION DETAILS
 ================================================================================
 Degree: Doctor of Philosophy (Ph.D.)
-Status: Doctoral Researcher / Ongoing (Started Sept 2024)
-Dissertation Title: Using the digital twin concept for the design of machine vision systems
+Status: Doctoral Researcher / Ongoing (Started September 2024)
+Dissertation Title: Genetic Algorithm-Driven Digital Twin Optimization for Sim-to-Real Industrial Defect Detection
 University: VSB - Technical University of Ostrava
-Location: Czechia
+Location: Ostrava, Czechia
 
-Degree: Master's Degree in Control and Information Systems
+Degree: Ing. (Master's Degree) in Control and Information Systems
 Timeline: September 2022 - June 2024
+Thesis: Image Preprocessing for Neural Network Input (later extended into a Scientific Reports publication)
 University: VSB - Technical University of Ostrava
-Location: Czechia
+Location: Ostrava, Czechia
 
-Degree: Bachelor of Engineering (B.E.) in Electronics and Communication Systems
+Degree: Bachelor of Engineering (B.E.) in Electronics and Communication Engineering
 Timeline: August 2017 - July 2021
 University: Bellary Institute of Technology and Management (Affiliated with VTU Belagavi)
 Location: India
@@ -46,125 +55,138 @@ Location: India
 ================================================================================
 PROFESSIONAL EXPERIENCE
 ================================================================================
-Role: Scientific Researcher
+Role: Scientific Researcher (Doctoral) - Computer Vision & Applied AI
 Organization: VSB - Technical University of Ostrava (VSB-TUO)
-Location: Ostrava, Czech Republic
+Location: Ostrava, Czechia
 Timeline: December 2024 - Present
-Description: Conducting research-focused development specializing in machine learning application, intelligent computer vision setups, and industrial predictive analytics.
+Description:
+  * Developing a genetic-algorithm-driven digital twin system that optimizes physics-based rendering parameters (Blender, NVIDIA Omniverse) so synthetic training images align with real production data via DINOv2 features, enabling sim-to-real defect detection.
+  * Developed a genetic algorithm framework that evolves image-preprocessing pipelines from a 48-operation library for CNN defect classification; published in Scientific Reports (2026) as first author.
+  * Delivered applied AI projects with industry partners and internal teams: warehouse metal plate counting (Project 3), water leakage and fault detection for pool equipment (Project 4), contract processing with NER (Project 5), and real-time energy forecasting for thermal storage (Project 6).
 
 Role: Intern
 Organization: Q Spiders
 Location: Bangalore, India
 Timeline: January 2021 - February 2021
+Description: Worked on Python programming, data structures, and AI project implementation.
 
 ================================================================================
 DETAILED PROJECT REPOSITORY
 ================================================================================
 
-PROJECT 1: Multi-Document Research Assistant — RAG-Powered Research Chatbot
+PROJECT 1: Multi-Document Research Assistant - RAG-Powered Research Chatbot
 - Category: Applied AI Engineering / Agentic AI
 - Timeline: April 2026
 - Core Tech Stack: Python, Streamlit, LangGraph, LangChain, ChromaDB, Groq, FastEmbed (ONNX), Ollama, PyMuPDF
 - Key Deliverables & Achievements:
   * Built a Streamlit-based RAG application enabling users to upload multiple research papers (PDF, DOCX, CSV, TXT) or paste article URLs and ask questions across all sources simultaneously.
-  * Designed a LangGraph-driven Classify → Retrieve → Answer pipeline that routes each query into one of six question types (comparison, conclusion, methodology, etc.) with tailored prompting for more accurate answers.
-  * Implemented a 7-model Groq fallback queue with local Ollama (Llama3) backup, ensuring high availability even under API rate limits.
-  * Engineered a custom PDF title-extraction cascade using PyMuPDF (font-size span analysis) to accurately identify paper titles for citation mapping, without relying on manual metadata.
+  * Designed a LangGraph-driven Classify -> Retrieve -> Answer pipeline that routes each query into one of six question types (comparison, conclusion, methodology, etc.) with tailored prompting for more accurate answers.
+  * Implemented a 7-model Groq fallback queue with local Ollama (Llama 3) backup, keeping the app available under API rate limits.
+  * Engineered a custom PDF title-extraction cascade using PyMuPDF (font-size span analysis) to identify paper titles for citation mapping without relying on manual metadata.
   * Integrated ChromaDB for semantic vector search (top-k retrieval) with FastEmbed ONNX embeddings, avoiding heavy PyTorch dependencies for lightweight deployment.
-  * Added a smart numbered citation system, sliding memory window for multi-turn conversations, and a RAG-internals debug panel showing retrieved chunks and relevance scores.
-  * Deployed the app live on Streamlit Community Cloud, delivering an end-to-end research assistant usable by anyone via browser.
+  * Added a numbered citation system, a sliding memory window for multi-turn conversations, and a RAG-internals debug panel showing retrieved chunks and relevance scores.
+  * Deployed live on Streamlit Community Cloud: https://researchassistantv2-79aaycvac74meqppdjn92e.streamlit.app/
   * GitHub: github.com/challasaiprakash/Researcher-Assistant
 
-PROJECT 2: AI-Powered Interactive Resume Chatbot
+PROJECT 2: AI-Powered Interactive Resume Chatbot (AskSai - this chatbot)
 - Category: Applied AI Engineering / Agentic AI
 - Timeline: April 2026
-- Core Tech Stack: Python, LangChain, Streamlit, Sentence-Transformer Embeddings, Vector Database, Qwen2.5-7B-Instruct (HuggingFace Inference Endpoint), Google Sheets API
+- Core Tech Stack: Python, LangChain, Streamlit, Sentence-Transformer Embeddings, Vector Database, Qwen2.5-7B-Instruct (Hugging Face Inference Endpoint), Google Sheets API
 - Key Deliverables & Achievements:
-  * Developed an AI-powered interactive resume chatbot that enables recruiters and visitors to query professional background, skills, and project details through natural language conversation.
-  * Designed a Retrieval-Augmented Generation (RAG) pipeline using LangChain, embedding resume content with sentence-transformer embeddings and storing it in a vector database to surface the most relevant context — including experience, education, and project highlights — for accurate, role-specific responses.
-  * Built an intent-aware query router that classifies incoming questions (projects, experience, or general profile) and directs them to the appropriate content subset, along with a keyword-based fallback retriever that keeps the app responsive if the embedding service is unavailable.
-  * Integrated an open-source large language model (Qwen2.5-7B-Instruct) hosted via a HuggingFace inference endpoint, orchestrated through LangChain, to generate grounded, hallucination-resistant answers from the retrieved resume content.
-  * Built a full-stack deployment with a responsive Streamlit front-end, including out-of-scope question detection with automatic logging to Google Sheets for continuous improvement, ensuring a seamless experience across desktop and mobile.
-  * Demonstrated end-to-end ownership of the project — from RAG pipeline design and model integration to UI design and deployment — showcasing applied skills in NLP, information retrieval, and production-ready AI application development.
+  * Developed an interactive resume chatbot that lets recruiters and visitors ask about Sai's background, skills, and projects in natural language.
+  * Designed a RAG pipeline using LangChain, embedding resume content with sentence-transformer embeddings and storing it in a vector database to retrieve the most relevant context for each question.
+  * Built an intent-aware query router that classifies questions (projects, experience, or general profile) and directs them to the right content, plus a keyword-based fallback retriever that keeps the app responsive if the embedding service is unavailable.
+  * Integrated Qwen2.5-7B-Instruct via a Hugging Face inference endpoint, orchestrated through LangChain, to generate answers grounded in the retrieved content.
+  * Built a Streamlit front-end with out-of-scope question detection and automatic logging to Google Sheets for continuous improvement.
+  * Live: https://tinyurl.com/AskSai
 
-PROJECT 3: AI Algorithm for Automated Detection, Segmentation & Counting of Metallic Plates in Warehouse Environments
+PROJECT 3: Automated Detection, Segmentation & Counting of Metal Plates in a Warehouse
 - Category: Industry Collaboration & Applied AI (Doctoral Research)
 - Timeline: January 2026 - June 2026
 - Core Tech Stack: Python, Computer Vision, Instance Segmentation, Image Processing Pipelines, ML Evaluation Metrics (Precision, Recall, mAP)
 - Key Deliverables & Achievements:
-  * Developed a computer vision AI algorithm to automatically detect, segment, and count metallic plates within a warehouse environment, eliminating the need for manual stock counting and reducing inventory errors.
-  * Implemented an instance segmentation model to precisely identify and isolate individual metallic plates from complex warehouse imagery, handling variable lighting conditions, stacked arrangements, and overlapping objects.
-  * Designed and trained the full ML pipeline — covering image data collection, preprocessing, model training, and evaluation using metrics including precision, recall, and mean average precision (mAP) — delivering a reliable, production-ready inventory automation solution.
+  * Developed a computer vision algorithm that automatically detects, segments, and counts metal plates in a warehouse, replacing manual stock counting.
+  * Implemented an instance segmentation model to identify and separate individual plates in complex warehouse images, handling variable lighting, stacked arrangements, and overlapping objects.
+  * Owned the full workflow: image data collection, annotation, preprocessing, model training, and evaluation using precision, recall, and mean average precision (mAP).
 
-PROJECT 4: AI-Based Water Leakage & Fault Detection System for Swimming Pool Equipment
+PROJECT 4: AI-Based Water Leakage & Fault Detection for Swimming Pool Equipment
 - Category: Industry Collaboration & Applied AI (Doctoral Research)
 - Timeline: October 2025 - May 2026
-- Core Tech Stack: Python, Machine Learning, Signal Preprocessing, Audio/Acoustic Data Analytics, Predictive Maintenance
+- Core Tech Stack: Python, Machine Learning, Audio/Acoustic Signal Processing, Feature Extraction, Predictive Maintenance
 - Key Deliverables & Achievements:
-  * Designed and implemented an AI-powered fault detection system to monitor swimming pool motor and filter setups, identifying water leakage conditions and assessing component health in real time.
-  * Developed a sound-based machine learning model that analyses acoustic signals from motors and filters to classify operational states — detecting the presence of water, motor malfunctions, and filter irregularities with high accuracy.
-  * Built an end-to-end pipeline covering audio data collection, signal preprocessing, feature extraction, and model training, enabling automated predictive maintenance and reducing the need for manual inspection of pool equipment.
-  * Result: Replaced manual equipment inspections with automated predictive maintenance pipelines.
+  * Designed and implemented an AI-powered system to monitor swimming pool motor and filter setups, identifying water leakage and assessing component health in real time.
+  * Developed a sound-based ML model that first detects the presence of water (leakage) from acoustic signals, then analyses motor sound to classify operating states and detect motor malfunctions and filter irregularities.
+  * Built an end-to-end pipeline covering audio data collection, signal preprocessing, feature extraction, and model training, enabling automated predictive maintenance and reducing manual inspection of pool equipment.
 
 PROJECT 5: Intelligent Contract Processing Pipeline with NER-Based Data Extraction
-- Category: Applied AI Engineering (Doctoral Researcher, Industry Collaboration)
+- Category: Industry Collaboration & Applied AI (Doctoral Research)
 - Timeline: December 2024 - June 2025
-- Core Tech Stack: Python, Multilingual NLP, Named Entity Recognition (NER), Custom Text Extraction, DeepL API, JSON, Excel Automation (Macros), GUI Development
+- Core Tech Stack: Python, Multilingual NLP, Named Entity Recognition (NER), DeepL API, JSON, Excel Automation (Macros), GUI Development
 - Key Deliverables & Achievements:
-  * Developed an end-to-end automated system to process Czech manufacturing contracts, eliminating manual data entry and accelerating order fulfilment workflows.
-  * Built a multilingual NLP pipeline integrating DeepL translation and custom text extraction to identify metal dimensions, styles, and production parameters from unstructured documents.
-  * Designed and trained a custom Named Entity Recognition (NER) model to automatically extract product specifications and customer details with high precision.
-  * Structured extracted data into standardized JSON format and integrated outputs with macro-enabled Excel tools used in legacy manufacturing operations.
-  * Created a Python-based real-time monitoring GUI to track document processing stages, improving operational visibility and workflow reliability.
-  * Result: Eradicated manual contract entry mistakes and accelerated operational order fulfillment.
+  * Developed an end-to-end automated system for a metal manufacturing company to process Czech manufacturing contracts, reducing manual data entry and speeding up order fulfilment.
+  * Built a multilingual NLP pipeline combining DeepL translation with custom text extraction to identify metal dimensions, styles, and production parameters from unstructured contracts.
+  * Designed and trained a custom Named Entity Recognition (NER) model to extract product specifications and customer details.
+  * Structured the extracted data as standardized JSON and integrated it with the client's macro-enabled Excel tools.
+  * Created a Python GUI to monitor document processing stages in real time.
 
-PROJECT 6: Image Preprocessing for Neural Network Input (Master's Thesis)
+PROJECT 6: Real-Time Forecasting of Extractable Energy in PCM Thermal Storage
+- Category: Applied Machine Learning (Internal project at VSB-TUO for another research team)
+- Timeline: [add dates]
+- Core Tech Stack: Python, scikit-learn (Gradient Boosting Regressor), Pandas, NumPy, Joblib, PyQt5
+- Key Deliverables & Achievements:
+  * Built a live Gradient Boosting system that forecasts a phase-change-material (PCM) heat-storage tank from the operator's target temperature and holding time plus live sensor data: end of heating, end of holding, end of cooling, total extractable energy (kWh), and the full energy-versus-time curve.
+  * The first forecast is issued 3 minutes after heating starts and updates every 10 seconds as new sensor data arrives.
+  * Engineered 20 live features (temperature slopes, charging rate, warm-up power) and prevented data leakage with grouped cross-validation, a fully held-out test set, and a truncation test proving each forecast uses only data observed so far.
+  * Results from the first 3-minute forecast on held-out runs: end of heating predicted within 1.6 min (R2 0.995), end of holding within 5.4 min (R2 0.989), total extractable energy within 0.27 kWh (R2 0.984); energy curve MAE 0.26 kWh (R2 0.975).
+  * Delivered a PyQt5 live GUI that updates in about 23 ms per sensor row, freezes past forecasts so they are never revised, and enforces energy conservation (extractable energy never exceeds input energy) in training; covered by a 73-check automated test suite.
+
+PROJECT 7: Image Preprocessing for Neural Network Input (Master's Thesis)
 - Category: Academic Research & Computer Vision
 - Timeline: June 2023 - May 2024
-- Core Tech Stack: Python, Convolutional Neural Networks (CNN), Deep Learning, Image Filters, Power BI, Data Diagnostics
+- Core Tech Stack: Python, Convolutional Neural Networks (CNN), Deep Learning, Image Filters, Power BI
 - Key Deliverables & Achievements:
-  * Implemented an image preprocessing pipeline using filters to identify defects in datasets.
-  * Trained a Convolutional Neural Network (CNN) model with the preprocessed data.
-  * Evaluated CNN performance using metrics such as accuracy, sensitivity, precision, execution time, and memory usage.
-  * Analyzed metric data to determine the optimal preprocessing sequence for best output.
-  * Demonstrated skills in image processing, data preparation, and deep learning model evaluation.
-  * Note: This research was later extended and published as a journal article, "Optimized image preprocessing strategies for enhanced neural network-based defect detection in industrial automation," in Scientific Reports (Nature Portfolio).
+  * Built an image-preprocessing pipeline that applies sequences of filters to industrial images to make defects more visible to a CNN classifier.
+  * Trained CNN defect-detection models on the preprocessed data and compared filter sequences on accuracy, sensitivity, precision, execution time, and memory usage.
+  * Identified the best-performing preprocessing sequence from the metric analysis.
+  * This work was later extended into a genetic-algorithm framework and published as first author in Scientific Reports (2026) (see Publications).
 
-PROJECT 7: Solar Powered Weather Station
+PROJECT 8: Comparative Time-Series Forecasting of Solar Radiation
+- Category: Academic Research / Time-Series Analysis
+- Timeline: October 2024 - February 2025
+- Core Tech Stack: Python, SARIMA, GARCH, LSTM, NARX, Ensemble Learning
+- Key Deliverables & Achievements:
+  * Performed exploratory data analysis and handled missing values in 38 years of daily solar radiation data.
+  * Developed and compared statistical (SARIMA, GARCH) and AI/deep-learning (LSTM, NARX, ensemble) models for solar radiation forecasting.
+  * Benchmarked the models with standard error metrics and visualized their predictions; NARX performed best in the comparison.
+
+PROJECT 9: Solar-Powered Weather Station
 - Category: Freelance Engineering Project
 - Timeline: February 2023 - June 2023
-- Core Tech Stack: Internet of Things (IoT), Wireless Transmission Protocols, Data Engineering, Energy-Efficient Algorithms
+- Core Tech Stack: Internet of Things (IoT), Wireless Data Transmission, Embedded Sensors, Energy-Efficient Algorithms
 - Key Deliverables & Achievements:
-  * Designed and implemented a solar-powered weather station using IoT technology for real-time environmental monitoring.
-  * Integrated sensors for temperature, humidity, and pressure, with wireless data transmission to a central server.
-  * Developed energy-efficient algorithms for power management and optimized data transmission protocols.
+  * Designed and implemented a solar-powered IoT weather station for real-time environmental monitoring.
+  * Integrated temperature, humidity, and pressure sensors with wireless data transmission to a central server.
+  * Developed energy-efficient power management and optimized data transmission.
   * Enabled remote access to weather data through web and mobile interfaces.
 
-PROJECT 8: Smart IoT-Based Health Monitoring for Quarantined COVID-19 Patients (Bachelor's Thesis)
+PROJECT 10: Smart IoT-Based Health Monitoring for Quarantined COVID-19 Patients (Bachelor's Thesis)
 - Category: Academic Research & Embedded Systems
 - Timeline: June 2020 - August 2021
-- Core Tech Stack: Internet of Things (IoT), Biosensors, Embedded Systems, Power Optimization Algorithms, Data Analytics
+- Core Tech Stack: Internet of Things (IoT), Biosensors, Embedded Systems, Power Optimization
 - Key Deliverables & Achievements:
-  * Developed and implemented a Smart IoT-based health monitoring system for quarantined COVID-19 patients.
-  * Specially designed to monitor heart rate, SpO2 levels, and environmental conditions remotely.
+  * Developed an IoT-based system to remotely monitor heart rate, SpO2 levels, and environmental conditions of quarantined COVID-19 patients.
   * Integrated sensors and IoT devices for real-time data transmission and analysis.
-  * Optimized power management algorithms to ensure continuous operation.
-  * Facilitated decision-making in critical situations through data-driven insights.
-  * Enhanced patient safety and healthcare efficiency during the global pandemic.
+  * Optimized power management to ensure continuous operation.
 
 ================================================================================
 PUBLICATIONS
 ================================================================================
-- "Optimized image preprocessing strategies for enhanced neural network-based defect detection in industrial automation" — Scientific Reports (Nature Portfolio). Co-authored with Koziorek, Hameed, Macháček, and others.
+- Challa, S. P. (first author), Lara de Leon, M. A., Koziorek, J., Hameed, I. A., & Machacek, Z. (2026). "Optimized image preprocessing strategies for enhanced neural network-based defect detection in industrial automation." Scientific Reports (Nature Portfolio). DOI: 10.1038/s41598-026-50951-y
+  Summary: A genetic algorithm framework that automatically evolves image-preprocessing filter sequences from a library of 48 operations for CNN-based defect classification, removing the need for hand-tuned pipelines. Tested across three real industrial product categories, the GA-optimized pipelines matched or outperformed hand-designed ones.
 
 ================================================================================
-JOB SIMULATIONS & ADDITIONAL EXPERIENCE
+CERTIFICATIONS
 ================================================================================
-Simulation: Power BI Job Simulation via Forage (PwC Switzerland)
-- Focus: Business Intelligence & Corporate Data Visualization
-- Achievements: Created executive-facing Power BI data visualization dashboards displaying complex operational KPIs. Analyzed corporate human resources metadata to locate root causes affecting executive-level gender diversity balance, communicating analytical outcomes via formal corporate reports.
-
-Simulation: Data Visualisation Job Simulation via Forage (Tata Consultancy Services)
-- Focus: Business Analytics & Executive Decision Making
-- Achievements: Authored visual data analysis layouts and metrics aimed at helping leadership executives drive operations decisions. Managed target preparation protocols for leadership sync meetings.
+- Claude Code 101 - Anthropic (July 2026)
+- Introduction to Subagents - Anthropic (July 2026)
 ================================================================================
